@@ -1,0 +1,6 @@
+{
+  "hosts": [
+    {"name": "my-server", "remote_port": 18080, "local_port": 8080, "local_mirror": true},
+    {"name": "my-other-server", "remote_port": 18080, "local_port": 8080, "local_mirror": false}
+  ]
+}

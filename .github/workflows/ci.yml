@@ -1,0 +1,31 @@
+name: Windows checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Offline behavior checks
+        run: python -m unittest discover -s tests -v
+      - name: Parse PowerShell
+        shell: powershell
+        run: |
+          Get-ChildItem -Recurse -Filter *.ps1 | Where-Object FullName -NotMatch 'local-data' | ForEach-Object {
+            $tokens=$null; $errors=$null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName,[ref]$tokens,[ref]$errors) | Out-Null
+            if($errors){throw ($errors | Out-String)}
+          }
+      - name: Verify portable installer and AHK syntax
+        shell: powershell
+        run: |
+          ./install.ps1 -InstallDir "$env:RUNNER_TEMP\llm-tray-runtime" -DataDir "$env:RUNNER_TEMP\llm-tray-data"
+          $receipt=Get-Content "$env:RUNNER_TEMP\llm-tray-data\installation.json" -Raw | ConvertFrom-Json
+          $p=Start-Process $receipt.executable -ArgumentList ('/ErrorStdOut /validate "'+$PWD+'\src\LLMTray.ahk"') -PassThru -Wait -NoNewWindow
+          if($p.ExitCode){throw 'AHK syntax check failed'}
+      - name: Public content audit
+        run: python scripts/audit.py

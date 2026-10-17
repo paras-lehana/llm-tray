@@ -1,0 +1,12 @@
+local-data/
+__pycache__/
+*.pyc
+*.log
+*.zip
+*.exe
+*.dll
+*.gguf
+config.ini
+!examples/config.ini
+.env*
+secrets*
