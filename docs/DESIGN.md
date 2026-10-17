@@ -7,6 +7,10 @@ strings are not legible at normal Windows tray sizes.
 
 Dark slate background #16202D, ink #E8EFF7, muted #AABACB; green #86E3A7,
 amber #FFD07D and red #FF9A9E. Segoe UI. State has a word as well as a color.
+The tray has a two-pixel frame at 32px: green #86E3A7 for Ready and orange
+#FFAD5C otherwise. Contrast against the slate background is 10.60:1 and
+8.90:1 respectively. The frame survives scaling to a normal 16px tray icon;
+the tooltip distinguishes stopped, sleeping, loading and unavailable states.
 One primary action: toggle model. Secondary controls: pin, settings, close.
 Tray click pins/opens; hover alone never changes model state. Escape hides and
 unpins. The title can be dragged; dragging pins. Settings are a keyboard-usable

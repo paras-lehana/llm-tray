@@ -56,6 +56,22 @@ necessarily switch when configuration changes. In recent native VS Code builds,
 the provider registry is `chatLanguageModels.json` in the active local user
 profile; the model provider's execution location can still differ.
 
+**Check the window's profile first.** A remote window may use a named profile
+while your local window uses Default. Default's registry is normally
+`%APPDATA%\Code\User\chatLanguageModels.json`; a named profile has its own
+`%APPDATA%\Code\User\profiles\<profile-id>\chatLanguageModels.json`. Adding a
+model only to Default will not make it available in that separate profile.
+Use Manage Models from the intended remote window so VS Code opens the right
+file. Preserve its existing providers. If your integration uses model-specific
+capability overrides, those settings also need to exist in the active profile.
+
+The model still runs on the PC. The remote server needs a working loopback
+tunnel, not a model download. Verify `/v1/models` and a short chat request from
+each server, then reopen that window's model picker and select the custom
+entry. Successful API tests alone do not prove the entry is visible in the UI.
+
+Official reference: [VS Code language models and Custom Endpoint setup](https://code.visualstudio.com/docs/agent-customization/language-models).
+
 For instruction-heavy projects, keep the same proven tool/context limits as
 your local integration. A short API reply proves reachability, not instruction
 retrieval, agent permissions or editor latency. Test a small actual file read

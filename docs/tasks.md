@@ -1,5 +1,26 @@
 # Task log
 
+## 2026-10-17 - Remote profile and tray border
+
+| # | Task | Status | Notes |
+|---|---|---|---|
+|1|Make PC model available in remote VS Code|Partial verification|Named profile corrected; both remote hosts answer; actual picker check awaits the remote desktop becoming visible.|
+|2|Green/orange tray border|Done|Installed and rendered Ready/Offline/Sleeping/Loading colors verified.|
+
+- 22:20–22:24 IST — Found remote windows use a named profile while the Qwen
+  provider existed only in Default. Added it to that profile, preserving
+  providers, comments and unrelated settings. Copied only this model's proven
+  128K capability/tool mapping. Private backups are outside Git.
+- 22:25 IST — Installed the border update. Actual AHK status suite: 11 passes.
+- 22:27 IST — Both remote hosts return REMOTE_OK from the PC model in 1.160s
+  and 0.901s. Existing loopback tunnels retained; no server model installed.
+- 22:29–22:32 IST — Render checks: 240 frame pixels match expected green or
+  orange in each of four states. Native-sized PNGs reviewed and hash-listed.
+- 22:34 IST — Windows virtual-desktop API confirms all VS Code windows are
+  outside the active desktop. Configuration is complete; no chat draft edited.
+
+[Report](tasks/2026-10-17-remote-profile-border/2026-10-17-remote-profile-border-v0.1.2.md).
+
 ## 2026-10-17 - Smooth panel dragging
 
 | # | Task | Status | Notes |

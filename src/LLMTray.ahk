@@ -34,7 +34,7 @@ ActionPid := 0, LastState := '', State := 'Checking', LastHover := 0, Visible :=
 Dragging := false, StatusRequest := 0, StatusStarted := 0, ServerState := 'Checking'
 MetricText := Map('ram','Unavailable','vram','Unavailable','gpu','Unavailable')
 Nvml := 0, Device := 0
-Palette := Map('green','86E3A7','amber','FFD07D','red','FF9A9E','muted','AABACB')
+Palette := Map('green','86E3A7','orange','FFAD5C','amber','FFD07D','red','FF9A9E','muted','AABACB')
 try {
     Nvml := DllCall('LoadLibrary','Str',A_WinDir '\System32\nvml.dll','Ptr')
     if !Nvml || DllCall(Nv('nvmlInit_v2'),'Cdecl UInt')
@@ -428,7 +428,7 @@ PaintStatus() {
     Power.Text := '● ' State
     Power.SetFont('c' Palette[shade])
     Hint.Text := State='Sleeping' ? 'Next message wakes me' : State='Working' ? 'Please wait…' : 'Click to start / stop'
-    DrawTrayIcon(Palette[shade])
+    DrawTrayIcon(Palette[shade],Palette[State='Ready' ? 'green' : 'orange'])
     A_IconTip := 'LLM Tray: ' State '`nVRAM ' values['vram'] ' GiB | RAM ' values['ram'] ' GiB | GPU ' values['gpu']
     if State!=LastState {
         Log('state=' State), LastState := State
@@ -439,7 +439,7 @@ PaintStatus() {
     IniWrite telemetry,DataDir '\telemetry.ini','live'
 }
 
-DrawTrayIcon(stateColor) {
+DrawTrayIcon(stateColor,borderColor) {
     global MetricKeys,Percent
     ; Generate a 32px opaque icon in memory. AHK owns/destroys the final HICON.
     info := Buffer(40,0)
@@ -457,14 +457,14 @@ DrawTrayIcon(stateColor) {
                 NumPut('UInt',0xFF000000|Integer('0x' color),pixels+((y+row)*32+x+A_Index-1)*4)
         }
     }
-    Rect(2,1,12,3,'AABACB')
-    Rect(2,4,5,2,'AABACB')
+    Rect(3,3,11,2,'AABACB')
+    Rect(3,5,4,2,'AABACB')
     loop 7 {
         y := A_Index-1
         loop 7 {
             x := A_Index-1
             if (x-3)**2+(y-3)**2<=10
-                Rect(24+x,y,1,1,stateColor)
+                Rect(23+x,2+y,1,1,stateColor)
         }
     }
     letters := Map('vram',['101','101','101','101','010'],'ram',['110','101','110','101','101'],'gpu',['111','100','101','101','111'])
@@ -481,6 +481,12 @@ DrawTrayIcon(stateColor) {
         else
             Rect(8,y+2,6,1,'AABACB')
     }
+    ; A 2px frame stays visible after Windows scales the icon down to 16px.
+    ; Green means Ready; orange means sleeping, stopped or not yet ready.
+    Rect(0,0,32,2,borderColor)
+    Rect(0,30,32,2,borderColor)
+    Rect(0,2,2,28,borderColor)
+    Rect(30,2,2,28,borderColor)
     mask := DllCall('gdi32\CreateBitmap','Int',32,'Int',32,'UInt',1,'UInt',1,'Ptr',Buffer(128,0),'Ptr')
     iconInfo := Buffer(A_PtrSize=8 ? 32 : 20,0)
     NumPut('Int',1,iconInfo)

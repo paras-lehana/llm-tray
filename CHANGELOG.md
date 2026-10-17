@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.2 — 2026-10-17
+
+- Add a visible green tray frame for Ready and orange for all other states;
+  keep the metric bars and detailed status label.
+- Document VS Code's per-profile model registry: remote windows using a named
+  profile do not automatically inherit Default's custom model entries.
+- Verify remote inference from two hosts and document the remaining live
+  picker check separately from successful configuration and API checks.
+
 ## 0.1.1 — 2026-10-17
 
 - Fix title dragging starting only after the mouse was released. Use native

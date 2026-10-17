@@ -6,13 +6,17 @@ VRAM, RAM and GPU usage live in the notification area. Hover for exact values;
 pin and drag the panel when you want it to stay. Toggle your model with a
 shortcut, choose your own launcher, and give the GPU back when you are done.
 
-**Windows 11 · AutoHotkey v2 · NVIDIA metrics · MIT · v0.1.1**
+**Windows 11 · AutoHotkey v2 · NVIDIA metrics · MIT · v0.1.2**
 
 ![LLM Tray showing a ready model, memory use and pin controls](assets/panel-ready.png)
 
 The tray icon uses V / R / G meter rows plus a status dot. At the normal16 px
 tray size, full numeric labels would be unreadable; hover gives you exact values.
 Meters are **whole-device usage**, including your browser and games.
+
+![Ready: green frame](assets/tray-ready.png) **Green frame:** model ready.
+![Offline: orange frame](assets/tray-offline.png) **Orange frame:** stopped,
+sleeping, loading or unavailable. Hover shows the exact state.
 
 ## Install in five minutes
 
@@ -81,6 +85,7 @@ For example, a guarded launcher can retain its own memory/temperature checks.
 - [Testing and limitations](docs/testing.md): measured checks and unsupported cases.
 - [Release task report](docs/tasks/2026-10-17-tray-first/2026-10-17-tray-first-v0.1.0.md).
 - [0.1.1 drag fix and measurements](docs/tasks/2026-10-17-smooth-drag/2026-10-17-smooth-drag-v0.1.1.md).
+- [0.1.2 remote profile fix and status border](docs/tasks/2026-10-17-remote-profile-border/2026-10-17-remote-profile-border-v0.1.2.md).
 
 ## Sleep, stop and context
 

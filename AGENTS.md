@@ -34,6 +34,10 @@ optional SSH tunnels. Config/state/binaries belong outside Git in local-data/.
 - Manual Stop frees model memory; Sleep stays wakeable by the next request.
 - Refuse foreign/stale process receipts; no second start under concurrency.
 - Remote SSH endpoint returns the PC model and answers a small request.
+- Remote VS Code: check the window's actual user profile, not only Default;
+  verify its model registry and capability limits, then its model picker.
+- Tray frame is green only for Ready; it is orange for offline, sleeping,
+  loading and unavailable states. Check actual rendered pixels at tray size.
 
 ## Required Validation
 PowerShell parsing, offline controller tests, AutoHotkey /validate, actual

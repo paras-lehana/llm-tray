@@ -33,6 +33,12 @@ Use a dedicated controller instance, preserve other applications and test:
    legible. Metrics must not be presented as per-model allocations.
 7. For SSH, verify remote loopback binding and a small inference response,
    then test actual editor file reads separately when authorized.
+8. For remote windows, inspect the actual VS Code profile. Confirm the custom
+   provider and its limits there, then check the picker in each intended window.
+   A registry in Default does not cover a named profile.
+9. Check the tray frame against Ready and Offline/Sleeping/Loading fixtures:
+   green for Ready, orange otherwise. Verify both the rendered border and the
+   descriptive tooltip; do not infer availability from resource usage bars.
 
 ## Release evidence
 
