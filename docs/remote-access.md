@@ -37,11 +37,18 @@ curl --fail http://127.0.0.1:18080/v1/models
 
 For automatic connection setup when the tray starts, create a trusted `.ps1`
 wrapper calling the command above with absolute paths, and set
-`[ui] connection_script` to it. Reconnect remote access in the tray reruns it
-without duplicating a live owned tunnel. There is no background reconnect loop.
-After Wi-Fi/SSH loss, use that menu or run Start again. Stop/Status use the same
+`[ui] connection_script` to it. Add `connection_retry_seconds=60` to check/reopen
+tunnels once a minute while the tray is running, or leave 0 for startup/manual
+only. Reconnect remote access reruns it immediately without duplicating a live
+owned tunnel. The initial startup attempt is not postponed by the retry timer.
+Failures and recovery are logged and notified; one failing host does not skip
+the others. Only one helper/operation runs per configuration at a time.
+Stop/Status use the same
 command with `-Action Stop ` or`-Action Status`; only owned, matching SSH PIDs are
-stopped. Exiting the tray leaves established tunnels and the model unchanged.
+stopped. Disable periodic retries and reload before deliberately using Stop,
+otherwise the next check reconnects. Exiting the tray leaves established tunnels
+and the model unchanged. Stale/reused PIDs after reboot are never killed; Start
+can create a new tunnel when the configured port is available.
 
 ## Copilot custom endpoint
 
@@ -97,3 +104,25 @@ separate direct8080model entry for local-only work if you need that independence
 Loopback limits network exposure; other users/processes on that remote host may
 still access the endpoint. Do not use an unauthenticated tunnel on an untrusted
 shared server. Private hostnames/keys belong in local config, not this repo.
+
+## Connection reset after a restart
+
+The tray, model server and tunnel are separate processes. Starting the tray
+does not load the model. After a full PC restart, Start the model once (or use
+your configured hotkey); native idle sleep can then wake on the next request.
+If Copilot reports a generic firewall/network error such as ECONNRESET:
+
+1. Check the PC's direct `/v1/models` and passive `/props` endpoint. If stopped,
+   Start the model; a larger context setting cannot fix a missing listener.
+2. Check the dedicated tunnel receipt/error log and the remote loopback listener.
+   An old remote forwarding connection may temporarily retain the chosen port
+   after a hard restart. Do not kill another listener; wait/retry or select an
+   unused port deliberately. Do not change firewall/sshd rules by guesswork.
+3. Check `/v1/models` and a small streamed chat from the remote host. Validate
+   thinking and tool-call chunks separately; health-only checks are insufficient.
+4. Retry the editor request only after the route is working. Full instruction/
+   tool workflows can still be slow and are a separate quality/latency test.
+
+OpenSSH's [ExitOnForwardFailure](https://man.openbsd.org/ssh_config#ExitOnForwardFailure)
+checks creation of forwarding listeners; it does not prove the final model
+destination is reachable. Keep the model availability check separate.

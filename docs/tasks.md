@@ -1,5 +1,24 @@
 # Task log
 
+## 2026-10-17 - Remote connection recovery
+
+| # | Task | Status | Notes |
+|---|---|---|---|
+|1|Repair remote model connection|Restored; editor replay pending|Model and tunnels restarted; remote text/thinking/tool-call streams pass; automatic connection repair enabled.|
+
+- 23:21 IST - Both owned tunnels and the local model were stopped. Remote port
+  is now free; tunnel log records an earlier bind failure. Copilot log matches
+  the screenshot's connection reset and network retries.
+- 23:22-23:23 IST - Restored both loopback forwards and the guarded model server.
+- 23:24-23:29 IST - Remote streams complete in 1.789s without thinking, 10.215s
+  with thinking, and 14.062s for a tool-call response using remote VS Code Node.
+- 23:29-23:33 IST - Added asynchronous, non-overlapping helper retries and
+  per-host tunnel recovery. Three new tunnel tests and twelve AHK checks pass.
+  Fixed initial timer replacement found during deployment; actual startup logs
+  now show connection setup after about 2s. Editor draft preserved.
+
+[Report](tasks/2026-10-17-remote-recovery/2026-10-17-remote-recovery-v0.1.4.md).
+
 ## 2026-10-17 - Tray sign-in startup
 
 | # | Task | Status | Notes |

@@ -133,6 +133,56 @@ def main() -> None:
                 error = (folder / 'output.log').read_text(errors='replace')
                 if error.strip():
                     raise AssertionError(error)
+            # A failed optional helper must be reported, retried and never
+            # overlapped, even when it runs longer than the retry interval.
+            helper = folder / 'connect.ps1'
+            helper.write_text('''$ErrorActionPreference='Stop'
+$attempts=Join-Path $PSScriptRoot 'attempts.txt'
+$active=Join-Path $PSScriptRoot 'active.txt'
+if(Test-Path -LiteralPath $active){throw 'Overlapping connection helpers'}
+$count=if(Test-Path -LiteralPath $attempts){[int](Get-Content -LiteralPath $attempts)}else{0}
+$count++
+Set-Content -LiteralPath $attempts -Value $count
+Set-Content -LiteralPath $active -Value $PID
+try {
+    if($count -eq 1){exit 1}
+    Start-Sleep -Seconds 15
+} finally {Remove-Item -LiteralPath $active}
+''', encoding='utf-8-sig')
+            with (folder / 'config.ini').open('a', encoding='utf-16') as config:
+                config.write(f'connection_script={helper}\nconnection_retry_seconds=10\n')
+            with (folder / 'connection-output.log').open('wb') as log:
+                child = subprocess.Popen(
+                    [str(args.ahk), '/ErrorStdOut', str(source), str(folder)],
+                    stdout=log, stderr=log,
+                    creationflags=subprocess.CREATE_NO_WINDOW)
+                try:
+                    started = time.monotonic()
+                    deadline = started + 40
+                    while time.monotonic() < deadline:
+                        if child.poll() is not None:
+                            raise AssertionError('Connection test tray exited')
+                        transcript = (folder / 'tray.log').read_text(encoding='utf-8-sig')
+                        if time.monotonic() - started > 6 and 'connections=failed' not in transcript:
+                            raise AssertionError('Periodic retry delayed the initial connection')
+                        if 'connections=connected' in transcript:
+                            assert 'connections=failed' in transcript, transcript
+                            assert (folder / 'attempts.txt').read_text().strip() == '2'
+                            results.append({'connection_retry_no_overlap': True})
+                            break
+                        time.sleep(0.1)
+                    else:
+                        raise AssertionError('Connection helper did not recover')
+                finally:
+                    child.terminate()
+                    child.wait(timeout=10)
+                    # On a failed check, let only our bounded fixture finish.
+                    deadline = time.monotonic() + 20
+                    while (folder / 'active.txt').exists() and time.monotonic() < deadline:
+                        time.sleep(0.1)
+            error = (folder / 'connection-output.log').read_text(errors='replace')
+            if error.strip():
+                raise AssertionError(error)
     finally:
         server.shutdown()
         server.server_close()

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.4 - 2026-10-17
+
+- Add opt-in periodic connection helpers, asynchronous exit monitoring, and
+  failure/recovery notifications. Keep initial startup separate from the timer.
+- Serialize tunnel operations; one failed host no longer skips others. Ignore
+  stale/reused PIDs for Start/Status while refusing to stop foreign processes.
+- Add recovery and tunnel regression checks; document the difference between
+  tray startup, model startup and a working remote inference connection.
+
 ## 0.1.3 - 2026-10-17
 
 - Add explicit tray startup at user sign-in through `install.ps1 -StartAtSignIn`

@@ -25,6 +25,7 @@ Other choices can be edited in `config.ini`:
 |`notifications `|`1`|Native action notices; Windows DND still applies|
 |`pinned `|`0`|Persistent panel; pin/drag updates it|
 |`connection_script `|empty|Optional trusted`.ps1` run at UI startup and via Reconnect menu|
+|`connection_retry_seconds`|`0`|Opt-in periodic connection helper, 10-3600 seconds; requires an idempotent script. `0` means startup/manual only.|
 
 AutoHotkey modifiers are `^` Ctrl,`!` Alt,`+` Shift,`#` Windows. For example
 `^!m` is Ctrl+Alt+M. A hotkey conflict cannot always be detected against another
@@ -127,6 +128,14 @@ The UI does not start a model on launch. An optional `connection_script` is
 trusted code, so its behavior is yours to define; the provided SSH example
 only opens tunnels. Windows may place the icon under **Show hidden icons**;
 drag this icon beside the clock to keep it visible outside overflow.
+
+For a retry-safe connection helper, set `connection_retry_seconds=60` and reload
+the tray. The initial run is immediate after startup; further runs are periodic
+while the tray is open, with one helper active at a time. Exit code 0 means
+success; a script must exit nonzero on failure. First failure and recovery are
+logged and notified without a toast every minute. Notification visibility still
+depends on Windows settings. This monitors the helper's result, not every remote
+endpoint. Set the interval to 0 and reload before deliberately stopping tunnels.
 
 To remove: disable startup using the command above, exit the tray, stop any
 model through its appropriate controller if desired, then remove this checkout

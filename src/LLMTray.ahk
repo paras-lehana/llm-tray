@@ -32,6 +32,7 @@ for key in StrSplit(IniRead(Config,'ui','metrics','vram,ram,gpu'),',') {
 }
 ActionPid := 0, LastState := '', State := 'Checking', LastHover := 0, Visible := false, SettingsOpen := false
 Dragging := false, StatusRequest := 0, StatusStarted := 0, ServerState := 'Checking'
+ConnectionHandle := 0, ConnectionState := ''
 MetricText := Map('ram','Unavailable','vram','Unavailable','gpu','Unavailable')
 Nvml := 0, Device := 0
 Palette := Map('green','86E3A7','orange','FFAD5C','amber','FFD07D','red','FF9A9E','muted','AABACB')
@@ -119,8 +120,12 @@ SetTimer Refresh, Max(1,Min(60,Number(IniRead(Config,'ui','refresh_seconds',3)))
 SetTimer HoverWatch, 100
 SetTimer FinishAction, 500
 SetTimer FinishStatusPoll, 50
+SetTimer FinishConnections, 500
 if IniRead(Config,'ui','connection_script','')!=''
-    SetTimer StartConnections,-1000
+    SetTimer StartInitialConnections,-1000
+ConnectionRetry := Integer(IniRead(Config,'ui','connection_retry_seconds',0))
+if ConnectionRetry>0 && IniRead(Config,'ui','connection_script','')!=''
+    SetTimer StartConnections,Max(10,Min(3600,ConnectionRetry))*1000
 
 Has(values,value) {
     for v in values
@@ -536,11 +541,49 @@ SafeReload() {
     Run Q(A_AhkPath) ' /restart ' Q(A_ScriptFullPath) ' ' Q(DataDir),,'Hide'
     ExitApp
 }
+StartInitialConnections() => StartConnections()
 StartConnections() {
-    global Config
+    global Config,ConnectionHandle,Dragging
+    if ConnectionHandle || Dragging
+        return
     script := IniRead(Config,'ui','connection_script','')
-    if script && FileExist(script) && RegExMatch(script,'i)\.ps1$')
-        Run 'powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ' Q(script),,'Hide'
+    if !script
+        return
+    try {
+        if !FileExist(script) || !RegExMatch(script,'i)\.ps1$')
+            throw Error('Connection script is missing or is not PowerShell.')
+        Run 'powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ' Q(script),,'Hide',&pid
+        ; Query the exact child through a handle, never a reusable process ID.
+        ConnectionHandle := DllCall('OpenProcess','UInt',0x1000,'Int',false,'UInt',pid,'Ptr')
+        if !ConnectionHandle
+            throw Error('Could not monitor the connection helper.')
+    } catch as err {
+        ConnectionOutcome(false,err.Message)
+    }
+}
+FinishConnections() {
+    global ConnectionHandle,Dragging
+    if !ConnectionHandle || Dragging
+        return
+    code := 259
+    ok := DllCall('GetExitCodeProcess','Ptr',ConnectionHandle,'UInt*',&code)
+    if ok && code=259
+        return
+    DllCall('CloseHandle','Ptr',ConnectionHandle)
+    ConnectionHandle := 0
+    ConnectionOutcome(ok && code=0,'Connection helper exit ' code)
+}
+ConnectionOutcome(ok,detail) {
+    global ConnectionState
+    next := ok ? 'connected' : 'failed'
+    if next=ConnectionState
+        return
+    previous := ConnectionState, ConnectionState := next
+    Log('connections=' next ' ' detail)
+    if !ok
+        Notify('Remote access failed. Check the tunnel logs or use Reconnect remote access. Configured retries will continue.',true)
+    else if previous='failed'
+        Notify('Remote access restored. The model must also be running before chatting.')
 }
 OpenSettings() {
     global SettingsOpen,ActionPid,DataDir,Config,Shortcut,MetricKeys,ProfileName,HoverEnabled,Notifications,WarningLevel,CriticalLevel
@@ -619,7 +662,9 @@ OpenSettings() {
     }
 }
 Cleanup(*) {
-    global Nvml,StatusRequest
+    global Nvml,StatusRequest,ConnectionHandle
+    if ConnectionHandle
+        DllCall('CloseHandle','Ptr',ConnectionHandle)
     try {
         if StatusRequest
             StatusRequest.Abort()

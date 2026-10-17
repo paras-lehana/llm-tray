@@ -35,6 +35,12 @@ optional SSH tunnels. Config/state/binaries belong outside Git in local-data/.
 - Manual Stop frees model memory; Sleep stays wakeable by the next request.
 - Refuse foreign/stale process receipts; no second start under concurrency.
 - Remote SSH endpoint returns the PC model and answers a small request.
+- After reboot/network loss, check both the model listener and the dedicated
+  tunnel. A running SSH process alone does not prove the model is reachable.
+  Verify streaming content and tool-call chunks from the remote client runtime.
+- Connection helpers must run initially even with periodic retries configured,
+  never overlap, report failure/recovery, preserve foreign PIDs after reboot,
+  and continue checking other hosts when one fails. Retry must not load a model.
 - Remote VS Code: check the window's actual user profile, not only Default;
   verify its model registry and capability limits, then its model picker.
 - Tray frame is green only for Ready; it is orange for offline, sleeping,

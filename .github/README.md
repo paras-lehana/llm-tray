@@ -14,3 +14,5 @@
 - [Remote profile and border report](../docs/tasks/2026-10-17-remote-profile-border/2026-10-17-remote-profile-border-v0.1.2.md).
 - [Sign-in startup report](../docs/tasks/2026-10-17-sign-in-startup/2026-10-17-sign-in-startup-v0.1.3.md).
 - [Startup manager](../scripts/startup.ps1) and [shortcut regression tests](../tests/test_startup.py).
+- [Remote recovery report](../docs/tasks/2026-10-17-remote-recovery/2026-10-17-remote-recovery-v0.1.4.md)
+  and [tunnel behavior tests](../tests/test_tunnels.py).

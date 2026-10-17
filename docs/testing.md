@@ -16,6 +16,8 @@ Git's publication set. This is not a clean-machine interactive desktop test.
 Startup tests create real shortcuts in an isolated folder: repeated enable,
 disable, paths with spaces, missing runtime and foreign-entry preservation.
 They never change the tester's real sign-in settings or launch an executable.
+Tunnel tests also cover per-host failure isolation, reused PID refusal and a
+concurrent-operation lock without making an external SSH connection.
 
 ## Native acceptance
 
@@ -48,6 +50,10 @@ Use a dedicated controller instance, preserve other applications and test:
     survives an installer rerun without the opt-in flag. Report a direct
     shortcut test separately from a full sign-out/reboot, which requires the
     user's agreement because it interrupts their session.
+11. With periodic connection checks enabled, the first helper must run promptly,
+    fail visibly, and later recover. A helper slower than the retry interval
+    must not overlap. Check streamed content and tool-call chunks from a real
+    remote runtime separately from this disposable recovery fixture.
 
 ## Release evidence
 
@@ -64,6 +70,10 @@ an unlocked desktop with the mouse idle. That option creates a disposable
 tray and measures movement while a fake endpoint takes five seconds to reply.
 No model weights or inference requests are involved. CI runs status checks
 without `--drag` after installing AutoHotkey.
+The same suite also uses a disposable connection script: first exit fails,
+the next run lasts 15 seconds against a 10-second retry interval, and then
+succeeds. It checks initial-run timing, failure/recovery logs and no overlap.
+Notifications are disabled in this fixture; it does not assert a visible toast.
 
 To measure your already-running tray, find its PID and run:
 

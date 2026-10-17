@@ -8,6 +8,7 @@ Last updated:2026-10-17 (Asia/Kolkata).
 |2|2026-10-17|Smooth panel dragging|Bug Fix|Done|[Entry](#smooth-panel-dragging)|
 |3|2026-10-17|Remote profile and status border|Config / Bug Fix|Configured; picker verification pending|[Entry](#remote-profile-and-status-border)|
 |4|2026-10-17|Tray sign-in startup|Bug Fix|Done; published 0.1.3|[Entry](#tray-sign-in-startup)|
+|5|2026-10-17|Remote connection recovery|Bug Fix|Transport restored; publishing|[Entry](#remote-connection-recovery)|
 
 ## Tray-first controller and remote access
 
@@ -250,3 +251,20 @@ Suggested next steps
 - Leave tray startup enabled and use the model toggle when needed.
 - Confirm the icon returns after the next normal restart. A full reboot was deliberately not forced during the current session; verification used the exact registered startup launcher.
 ```
+
+
+## Remote connection recovery
+
+Original request (host redacted for publication):
+> this did not work on [remote SSH host]
+
+Screenshot: Copilot retries, then fetch failed / read ECONNRESET with the
+PC Qwen thinking model selected. No screenshot or raw transcript published.
+
+Pre-flight: project llm-tray on main; read project AGENTS, task/remote guides,
+shared server-access/troubleshooting guidance and Windows/VPS host facts.
+Preserve the existing editor draft and providers. Inspect model, tunnel and
+client logs independently; test actual remote streamed output.
+
+[Report and file inventory](tasks/2026-10-17-remote-recovery/2026-10-17-remote-recovery-v0.1.4.md).
+Canonical A-G closeout follows publication verification.
