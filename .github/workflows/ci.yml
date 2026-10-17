@@ -27,5 +27,7 @@ jobs:
           $receipt=Get-Content "$env:RUNNER_TEMP\llm-tray-data\installation.json" -Raw | ConvertFrom-Json
           $p=Start-Process $receipt.executable -ArgumentList ('/ErrorStdOut /validate "'+$PWD+'\src\LLMTray.ahk"') -PassThru -Wait -NoNewWindow
           if($p.ExitCode){throw 'AHK syntax check failed'}
+          python tests/check_tray_status.py --ahk $receipt.executable --output "$env:RUNNER_TEMP\tray-status.json"
+          if($LASTEXITCODE){throw 'Native tray status checks failed'}
       - name: Public content audit
         run: python scripts/audit.py

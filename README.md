@@ -6,7 +6,7 @@ VRAM, RAM and GPU usage live in the notification area. Hover for exact values;
 pin and drag the panel when you want it to stay. Toggle your model with a
 shortcut, choose your own launcher, and give the GPU back when you are done.
 
-**Windows 11 · AutoHotkey v2 · NVIDIA metrics · MIT · v0.1.0**
+**Windows 11 · AutoHotkey v2 · NVIDIA metrics · MIT · v0.1.1**
 
 ![LLM Tray showing a ready model, memory use and pin controls](assets/panel-ready.png)
 
@@ -56,6 +56,10 @@ Windows may put the new icon under **Show hidden icons**. Drag it beside the
 clock to keep it visible. This is a notification-area icon, not a taskbar app
 button. The pin applies to the detail panel, not Windows' tray visibility.
 
+Drag by holding the panel title. Movement starts on mouse-down; meter updates
+pause while you move it and resume on release. Slow status requests run
+asynchronously, so they do not hold the panel still. Dragging also pins it.
+
 ![Native configuration dialog](assets/settings.png)
 
 ## Use your own setup
@@ -76,6 +80,7 @@ For example, a guarded launcher can retain its own memory/temperature checks.
   through loopback tunnels, with no public model listener.
 - [Testing and limitations](docs/testing.md): measured checks and unsupported cases.
 - [Release task report](docs/tasks/2026-10-17-tray-first/2026-10-17-tray-first-v0.1.0.md).
+- [0.1.1 drag fix and measurements](docs/tasks/2026-10-17-smooth-drag/2026-10-17-smooth-drag-v0.1.1.md).
 
 ## Sleep, stop and context
 

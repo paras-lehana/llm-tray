@@ -31,6 +31,8 @@ for key in StrSplit(IniRead(Config,'ui','metrics','vram,ram,gpu'),',') {
         MetricKeys.Push(key)
 }
 ActionPid := 0, LastState := '', State := 'Checking', LastHover := 0, Visible := false, SettingsOpen := false
+Dragging := false, StatusRequest := 0, StatusStarted := 0, ServerState := 'Checking'
+MetricText := Map('ram','Unavailable','vram','Unavailable','gpu','Unavailable')
 Nvml := 0, Device := 0
 Palette := Map('green','86E3A7','amber','FFD07D','red','FF9A9E','muted','AABACB')
 try {
@@ -47,8 +49,7 @@ PanelWidth := 490
 Panel := Gui('+AlwaysOnTop -Caption +ToolWindow','LLM Tray - Model resources')
 Panel.BackColor := '16202D'
 Panel.SetFont('s9 cAABACB','Segoe UI')
-Title := Panel.AddText('x16 y10 w330 h24','LLM TRAY   /   ' PrettyHotkey(Shortcut))
-Title.OnEvent('Click', (*) => DragPanel())
+Title := Panel.AddText('x16 y10 w330 h24 +0x100','LLM TRAY   /   ' PrettyHotkey(Shortcut))
 Panel.SetFont('s12 cE8EFF7','Segoe Fluent Icons')
 PinButton := Panel.AddText('x356 y7 w32 h28 Center',Chr(0xE718))
 PinButton.OnEvent('Click',(*) => TogglePin())
@@ -106,7 +107,9 @@ catch {
 }
 Log('hotkey=' Shortcut)
 OnMessage(0x404,TrayEvent)
-OnMessage(0x232,(w,l,m,h) => h=Panel.Hwnd ? SavePosition() : '')
+OnMessage(0x201,PanelPointerDown)
+OnMessage(0x231,PanelMoveStarted)
+OnMessage(0x232,PanelMoveEnded)
 OnExit Cleanup
 PinButton.SetFont('c' (Pinned ? '86E3A7' : 'AABACB'))
 if Pinned
@@ -115,6 +118,7 @@ Refresh()
 SetTimer Refresh, Max(1,Min(60,Number(IniRead(Config,'ui','refresh_seconds',3))))*1000
 SetTimer HoverWatch, 100
 SetTimer FinishAction, 500
+SetTimer FinishStatusPoll, 50
 if IniRead(Config,'ui','connection_script','')!=''
     SetTimer StartConnections,-1000
 
@@ -234,12 +238,40 @@ OpenPinned() {
     if !Pinned
         TogglePin()
 }
-DragPanel() {
-    global Pinned,Panel
-    if !Pinned
-        TogglePin()
-    PostMessage 0xA1,2,,, 'ahk_id ' Panel.Hwnd
-    SetTimer SavePosition,-500
+PanelPointerDown(wParam,lParam,msg,hwnd) {
+    global Panel,Title,Dragging,Pinned,PinButton
+    ; A Text Click fires on release. Start Windows' move loop on the initial
+    ; button-down instead; exclude pin/settings/close and all model controls.
+    if hwnd!=Title.Hwnd && !(hwnd=Panel.Hwnd && (lParam & 0xFFFF)<350*A_ScreenDPI/96 && ((lParam>>16)&0xFFFF)<34*A_ScreenDPI/96)
+        return
+    Dragging := true, Pinned := true
+    PinButton.SetFont('c86E3A7')
+    CoordMode 'Mouse','Screen'
+    MouseGetPos &x,&y
+    DllCall('ReleaseCapture')
+    PostMessage 0xA1,2,((y & 0xFFFF)<<16)|(x & 0xFFFF),,'ahk_id ' Panel.Hwnd
+    return 0
+}
+PanelMoveStarted(w,l,m,h) {
+    global Panel,Dragging
+    if h=Panel.Hwnd
+        Dragging := true
+}
+PanelMoveEnded(w,l,m,h) {
+    global Panel,Dragging
+    if h=Panel.Hwnd {
+        Dragging := false
+        ; Never perform configuration writes in the native move loop.
+        SetTimer PersistPanelMove,-1
+    }
+}
+PersistPanelMove() {
+    global Pinned,Config,Dragging
+    if Dragging
+        return
+    IniWrite Integer(Pinned),Config,'ui','pinned'
+    SavePosition()
+    Refresh()
 }
 SavePosition() {
     global Panel,Config,Pinned
@@ -250,7 +282,9 @@ SavePosition() {
     }
 }
 HoverWatch() {
-    global Visible,Pinned,LastHover,Panel,SettingsOpen,HoverEnabled
+    global Visible,Pinned,LastHover,Panel,SettingsOpen,HoverEnabled,Dragging
+    if Dragging || (Visible && (Pinned || SettingsOpen))
+        return
     CoordMode 'Mouse','Screen'
     MouseGetPos &x,&y
     r := TrayRect()
@@ -306,7 +340,9 @@ TrayEvent(wParam,lParam,msg,hwnd) {
 }
 
 Refresh() {
-    global Percent,MetricValues,Nvml,Device,Endpoint,Protocol,ExpectedModel,ActionPid,State,LastState,Palette,Power,Hint,DataDir,Visible,Pinned
+    global Percent,MetricValues,Nvml,Device,Dragging,MetricText
+    if Dragging
+        return
     values := Map('ram','Unavailable','vram','Unavailable','gpu','Unavailable')
     for key in Percent
         Percent[key] := -1
@@ -332,33 +368,62 @@ Refresh() {
         control.Text := values[key]
         control.SetFont('c' Color(Percent[key]))
     }
+    MetricText := values
+    StartStatusPoll()
+    PaintStatus()
+}
+StartStatusPoll() {
+    global StatusRequest,StatusStarted,ServerState,ActionPid,Endpoint,Protocol
+    if ActionPid || StatusRequest
+        return
+    try {
+        http := ComObject('WinHttp.WinHttpRequest.5.1')
+        http.SetProxy(1) ; Loopback endpoints do not need proxy discovery.
+        http.SetTimeouts(500,500,500,500)
+        path := Protocol='llama' ? '/props' : Protocol='ollama' ? '/api/ps' : '/health'
+        http.Open('GET',Endpoint path,true)
+        StatusStarted := A_TickCount, StatusRequest := http
+        http.Send()
+    } catch {
+        StatusRequest := 0, ServerState := 'Offline'
+    }
+}
+FinishStatusPoll() {
+    global StatusRequest,StatusStarted,ServerState,Protocol,ExpectedModel,Dragging
+    if !StatusRequest || Dragging
+        return
     next := 'Offline'
-    if !ActionPid {
-        try {
-            http := ComObject('WinHttp.WinHttpRequest.5.1')
-            http.SetTimeouts(500,500,500,500)
-            path := Protocol='llama' ? '/props' : Protocol='ollama' ? '/api/ps' : '/health'
-            http.Open('GET',Endpoint path,false)
-            http.Send()
-            if http.Status=200 {
-                next := 'Ready'
-                if Protocol='llama' {
-                    if ExpectedModel && (!RegExMatch(http.ResponseText,'"model_alias"\s*:\s*"([^"]+)"',&model) || model[1]!=ExpectedModel)
-                        next := 'Other model'
-                    else if RegExMatch(http.ResponseText,'"is_sleeping"\s*:\s*true')
-                        next := 'Sleeping'
-                } else if Protocol='ollama' {
-                    escaped := RegExReplace(ExpectedModel,'[\\.*?+\[\]{}()|^$]','\$0')
-                    next := RegExMatch(http.ResponseText,'"(name|model)"\s*:\s*"' escaped '"') ? 'Ready' : 'Unloaded'
-                }
-            } else {
-                next := http.Status=503 ? 'Loading' : 'Endpoint error'
+    try {
+        http := StatusRequest
+        ; Zero seconds is a nonblocking completion check, not a network wait.
+        if !http.WaitForResponse(0) {
+            if A_TickCount-StatusStarted<2000
+                return
+            http.Abort()
+        } else if http.Status=200 {
+            next := 'Ready'
+            if Protocol='llama' {
+                if ExpectedModel && (!RegExMatch(http.ResponseText,'"model_alias"\s*:\s*"([^"]+)"',&model) || model[1]!=ExpectedModel)
+                    next := 'Other model'
+                else if RegExMatch(http.ResponseText,'"is_sleeping"\s*:\s*true')
+                    next := 'Sleeping'
+            } else if Protocol='ollama' {
+                escaped := RegExReplace(ExpectedModel,'[\\.*?+\[\]{}()|^$]','\$0')
+                next := RegExMatch(http.ResponseText,'"(name|model)"\s*:\s*"' escaped '"') ? 'Ready' : 'Unloaded'
             }
+        } else {
+            next := http.Status=503 ? 'Loading' : 'Endpoint error'
         }
     }
-    if ActionPid
-        next := 'Working'
-    State := next
+    StatusRequest := 0, ServerState := next
+    PaintStatus()
+}
+PaintStatus() {
+    global MetricText,ActionPid,State,ServerState,LastState,Palette,Power,Hint,DataDir,Visible,Pinned,Dragging
+    if Dragging
+        return
+    values := MetricText
+    State := ActionPid ? 'Working' : ServerState
     shade := State='Ready' ? 'green' : State='Offline' || State='Unloaded' ? 'red' : 'amber'
     Power.Text := '● ' State
     Power.SetFont('c' Palette[shade])
@@ -368,11 +433,10 @@ Refresh() {
     if State!=LastState {
         Log('state=' State), LastState := State
     }
-    IniWrite State,DataDir '\telemetry.ini','live','state'
-    IniWrite Integer(Visible),DataDir '\telemetry.ini','live','visible'
-    IniWrite Integer(Pinned),DataDir '\telemetry.ini','live','pinned'
+    telemetry := 'state=' State '`nvisible=' Integer(Visible) '`npinned=' Integer(Pinned)
     for key,value in values
-        IniWrite value,DataDir '\telemetry.ini','live',key
+        telemetry .= '`n' key '=' value
+    IniWrite telemetry,DataDir '\telemetry.ini','live'
 }
 
 DrawTrayIcon(stateColor) {
@@ -444,8 +508,8 @@ Act(action) {
     Refresh()
 }
 FinishAction() {
-    global ActionPid,DataDir
-    if !ActionPid || ProcessExist(ActionPid)
+    global ActionPid,DataDir,Dragging
+    if Dragging || !ActionPid || ProcessExist(ActionPid)
         return
     ActionPid := 0
     result := DataDir '\action.ini'
@@ -549,7 +613,11 @@ OpenSettings() {
     }
 }
 Cleanup(*) {
-    global Nvml
+    global Nvml,StatusRequest
+    try {
+        if StatusRequest
+            StatusRequest.Abort()
+    }
     try SavePosition()
     try {
         if Nvml

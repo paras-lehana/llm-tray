@@ -1,5 +1,24 @@
 # Task log
 
+## 2026-10-17 - Smooth panel dragging
+
+| # | Task | Status | Notes |
+|---|---|---|---|
+|1|Fix unsmooth dragging|Done|Native mouse-down fix installed; live, hover-panel and slow-endpoint movement checks pass.|
+
+- 22:04 IST — Baseline: panel stayed at the starting position during almost
+  the entire eight-second held-button trace; p95 tracking error 222 px.
+- 22:06 IST — Native mouse-down movement and asynchronous status polling
+  installed; live trace p95/max error 0/0 px. Model process preserved.
+- 22:10 IST — Initially unpinned hover panel also tracks at 0/0 px and pins
+  on drag. Thirteen existing backend tests pass in 23.849 seconds.
+- 22:10 IST — Corrected fixture passes all 11 state checks and the five-second
+  endpoint drag stress check. Model process unchanged; only passive requests.
+- 22:12 IST — Settings, reload/persisted position and unpin/hide pass. Five
+  PowerShell parsers and AHK syntax pass; public audit: 39 files, zero findings.
+
+[Drag fix report](tasks/2026-10-17-smooth-drag/2026-10-17-smooth-drag-v0.1.1.md).
+
 ## 2026-10-17 - Tray-first controller and remote workspaces
 
 Implementation published as b1356f3 on main; Windows CI39045470914 passed. Version0.1.0.

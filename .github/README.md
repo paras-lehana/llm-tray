@@ -9,3 +9,5 @@
 - [Design](../docs/DESIGN.md), [testing](../docs/testing.md), [tasks](../docs/tasks.md).
 - [Prompt log](../docs/prompts.md), [task report index](../docs/tasks/README.md).
 - [LinkedIn draft](../docs/linkedin.md), [Medium draft](../docs/medium.md).
+- [Smooth drag report](../docs/tasks/2026-10-17-smooth-drag/2026-10-17-smooth-drag-v0.1.1.md).
+- [Native drag probe](../tests/measure-drag.ps1) and [AHK status checks](../tests/check_tray_status.py).

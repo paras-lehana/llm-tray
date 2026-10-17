@@ -18,6 +18,13 @@ Built-in llama.cpp creates and owns a server; custom profiles call reviewed
 PowerShell scripts; Ollama loads/unloads one model through its existing daemon.
 Monitoring is passive and independent of lifecycle ownership.
 
+The title starts the Windows move loop on WM_LBUTTONDOWN, not a release-time
+Text Click callback. During movement, status completion, metrics and hover
+work are deferred; WM_EXITSIZEMOVE schedules one position save. Status uses
+asynchronous WinHTTP, nonblocking completion checks and a single outstanding
+request. A two-second deadline is evaluated when the panel is not moving.
+These choices keep network waits and INI writes out of the drag path.
+
 No secret values are required. SSH uses existing identities and host checking.
 Optional tunnels listen on remote loopback only; they do not edit existing SSH
 sessions, containers, firewall rules or public routing.

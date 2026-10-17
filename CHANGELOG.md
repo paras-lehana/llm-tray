@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.1 — 2026-10-17
+
+- Fix title dragging starting only after the mouse was released. Use native
+  Windows movement from mouse-down, including an initially unpinned panel.
+- Make passive status requests asynchronous with one outstanding request and
+  a two-second completion deadline outside active dragging.
+- Defer meter painting, hover checks and position writes during movement;
+  resume on release and save the final position once.
+- Add sampled native drag checks and actual AHK status-transition tests,
+  including timeout recovery and wrong-model/sleep/Ollama states.
+
 ## 0.1.0 — 2026-10-17
 
 - Native meter icon with configurable VRAM/RAM/GPU rows and model status.

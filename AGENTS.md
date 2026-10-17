@@ -25,6 +25,9 @@ optional SSH tunnels. Config/state/binaries belong outside Git in local-data/.
 ## Browser Test Cases / Native Equivalents
 - Actual tray hover reveals panel; moving away hides it; click/pin retains it.
 - Drag a pinned panel, restart, verify position persists and is on-screen.
+- Hold the title and trace a continuous path: the panel must track while the
+  button is down, including slow/offline status endpoints. Measure tracking
+  error with tests/measure-drag.ps1; final-position-only checks miss stutter.
 - Metrics, order, unavailable GPU, thresholds and shortcut can be configured.
 - Settings reload must preserve a non-default data directory and pinned position.
 - Tray menu and global shortcut toggle with notifications and correct state.
