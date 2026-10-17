@@ -89,6 +89,8 @@ and the 30-minute model idle policy remain intact.
 |Ready frame|All 240 frame pixels equal #86E3A7|
 |Offline, Sleeping, Loading frames|All 240 frame pixels equal #FFAD5C in each case|
 |Native-sized visual inspection|Ready and Offline rendered PNGs inspected|
+|Windows CI39052298183|Pass: backend/status checks, parsers, installer and audit|
+|Public content/link audit|42 tracked files, zero findings; 48 relative links, zero missing|
 
 Pixel evidence comes from the actual drawing buffer of a disposable,
 instrumented copy of the same AHK source running against controlled status
@@ -143,6 +145,9 @@ rerun locally for this isolated icon change.
 
 Primary references: [VS Code Custom Endpoint models](https://code.visualstudio.com/docs/agent-customization/language-models)
 and [Microsoft's virtual-desktop membership API](https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ivirtualdesktopmanager-iswindowoncurrentvirtualdesktop).
+
+Published implementation: [bffa8fe](https://github.com/paras-lehana/llm-tray/commit/bffa8fe6abe6374a3321ece4694b2d3540985845),
+main; [Windows CI](https://github.com/paras-lehana/llm-tray/actions/runs/39052298183).
 
 ## Original request
 

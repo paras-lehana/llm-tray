@@ -6,6 +6,7 @@ Last updated:2026-10-17 (Asia/Kolkata).
 |---|---|---|---|---|---|
 |1|2026-10-17|Tray-first controller and remote access|Feature|Published; remote UI pending|[Entry](#tray-first-controller-and-remote-access)|
 |2|2026-10-17|Smooth panel dragging|Bug Fix|Done|[Entry](#smooth-panel-dragging)|
+|3|2026-10-17|Remote profile and status border|Config / Bug Fix|Configured; picker verification pending|[Entry](#remote-profile-and-status-border)|
 
 ## Tray-first controller and remote access
 
@@ -130,4 +131,66 @@ What's done
 Suggested next steps
 - Keep continuous dragging and delayed-response checks in future releases.
 - Test movement between differently scaled monitors before claiming support for that setup.
+```
+
+
+## Remote profile and status border
+
+Date: 2026-10-17, 22:38 IST. Project: llm-tray; branch: main.
+Type: Config / Bug Fix. Files changed: 15 public files, private profile settings.
+
+### Original prompt
+
+> cant find the llm on remote servers via vscode, can you check, windows already open. its just remote server login , the llm would run from local like here. i think we just need simple configuration.
+> Also that icon can have a border around that can have green if ON and orange if the model is off.
+
+### Pre-flight
+
+- Preserve existing providers and editor drafts (project AGENTS.md).
+- Keep host-specific settings private (llm-tray repository rules).
+- Test the actual model picker and both icon states (native UI regression checks).
+
+The UI and context-maintenance skills were reused. Sources, commands, file
+inventory and limitations are recorded in the linked report. The remote desktop
+question remains unanswered; configuration/API checks are distinct from UI proof.
+
+### Canonical closeout
+
+**A. Updated:** Your remote windows use **Agentic Coder**, but Qwen was configured only in **Default**. I added **PC Qwen3.6 Q4 - Thinking - 128K - SSH** to the correct profile. Inference still runs on your PC.
+
+The tray now has a **green border when Ready** and an **orange border when off, sleeping, or loading**.
+
+**B. Verification:** Both remote servers answered through the PC model in **1.16s and 0.90s**. Eleven status checks and four icon-state checks passed. Existing providers/settings were preserved. Code, documentation and reviewed icons are published as [bffa8fe](https://github.com/paras-lehana/llm-tray/commit/bffa8fe); [report and file inventory](https://github.com/paras-lehana/llm-tray/blob/main/docs/tasks/2026-10-17-remote-profile-border/2026-10-17-remote-profile-border-v0.1.2.md).
+
+**C. Status**
+
+| # | Pointer Task | Original Pointer Text | Status | What Was Done |
+|---|---|---|---|---|
+|2|Icon border|green if ON and orange if the model is off|DONE|Installed and color-checked.|
+|1|Remote VS Code|cant find the llm on remote servers via vscode|PARTIALLY DONE|Profile fixed and connections tested; picker verification pending.|
+
+**D. Finding:** The remote VS Code windows are on another Windows virtual desktop, which prevented the live click check. No chat drafts were edited.
+
+**E. Pending**
+
+| Item | Status | Reason |
+|---|---|---|
+|Remote model-picker check|Pending|Requires the desktop containing those VS Code windows.|
+
+**F. Next step:** In each remote window, open Copilot’s model picker and select **PC Qwen3.6 Q4 - Thinking - 128K - SSH**. No remote model installation is needed. [VS Code model setup guide](https://code.visualstudio.com/docs/agent-customization/language-models).
+
+**G. Forwardable summary**
+
+```text
+LLM Tray — remote configuration corrected and status border installed (version 0.1.2)
+
+What's done
+- The remote development windows used a different settings profile from the local window. The PC's Qwen model is now configured in that profile, with the existing model limits preserved.
+- Both remote servers successfully received short answers from the model running on the PC. No model was installed on either server, and existing connections were retained.
+- The tray icon now has a green border when the model is ready and an orange border when it is off, sleeping or loading. The detailed hover status remains available.
+- Existing providers and unrelated settings were preserved. The changes and test results are documented in the public repository.
+
+Suggested next steps
+- Switch to the Windows desktop containing the remote development windows and select the configured Qwen model.
+- Complete one small chat there. Connection tests passed, but the actual model-picker check is still pending.
 ```

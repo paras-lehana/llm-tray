@@ -18,6 +18,10 @@
   orange in each of four states. Native-sized PNGs reviewed and hash-listed.
 - 22:34 IST — Windows virtual-desktop API confirms all VS Code windows are
   outside the active desktop. Configuration is complete; no chat draft edited.
+- 22:39 IST — Implementation bffa8fe is published on main. Windows CI39052298183
+  passes, including 13 backend tests, AHK status checks, parsing and installer
+  validation. Public audit: 42 files/zero findings; 48 relative links resolve.
+  [Source prerelease 0.1.2](https://github.com/paras-lehana/llm-tray/releases/tag/v0.1.2).
 
 [Report](tasks/2026-10-17-remote-profile-border/2026-10-17-remote-profile-border-v0.1.2.md).
 
