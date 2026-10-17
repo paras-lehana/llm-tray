@@ -2,6 +2,10 @@
 
 Requested 17 October; installed and verified 18 October 2026 (Asia/Kolkata).
 Project: [LLM Tray](https://github.com/paras-lehana/llm-tray), branch `main`.
+Implementation `0a8dc9954a3dc41b846f0f9f8aeb4d4517fb97ab`;
+[source prerelease v0.1.5](https://github.com/paras-lehana/llm-tray/releases/tag/v0.1.5).
+[Windows CI39058881135](https://github.com/paras-lehana/llm-tray/actions/runs/39058881135) passed.
+Public audit: 48 tracked files, zero findings; 69 relative links resolve.
 
 ## At a glance
 

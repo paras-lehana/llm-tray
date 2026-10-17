@@ -15,6 +15,9 @@ Last updated: 2026-10-18 (Asia/Kolkata).
 - 00:03 IST - Eight-second drag: p95/max error 0/0 px, 258 samples.
 - 00:05 IST - 20 behavior tests and 12 AHK status/recovery checks pass.
 - Reviewed Settings screenshot; private config remains at 1000 ms and 10%.
+- 00:09 IST - Implementation 0a8dc99 and source prerelease v0.1.5 published.
+  Windows CI39058881135 passes. Public audit: 48 files / zero findings;
+  69 relative links resolve. Final tray hidden/unpinned; model process unchanged.
 
 [Report](tasks/2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md).
 

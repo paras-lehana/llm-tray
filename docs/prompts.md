@@ -9,7 +9,7 @@ Last updated:2026-10-18 (Asia/Kolkata).
 |3|2026-10-17|Remote profile and status border|Config / Bug Fix|Configured; picker verification pending|[Entry](#remote-profile-and-status-border)|
 |4|2026-10-17|Tray sign-in startup|Bug Fix|Done; published 0.1.3|[Entry](#tray-sign-in-startup)|
 |5|2026-10-17|Remote connection recovery|Bug Fix|Restored; published 0.1.4; editor replay pending|[Entry](#remote-connection-recovery)|
-|6|2026-10-18|Hover delay and transparency|Feature|Installed; publication checks in progress|[Entry](#hover-delay-and-transparency)|
+|6|2026-10-18|Hover delay and transparency|Feature|Done; published 0.1.5|[Entry](#hover-delay-and-transparency)|
 
 ## Tray-first controller and remote access
 
@@ -334,4 +334,34 @@ The previous task's canonical closeout was verified before resuming.
 
 [Report and complete changed-file inventory](tasks/2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md).
 Native dwell, settings persistence, alpha, drag, 20 behavior tests, 12 actual AHK
-fixture checks and syntax/parsing pass. Canonical closeout follows publication.
+fixture checks and syntax/parsing pass. Canonical A-G closeout:
+
+**A. Done:** The panel now has **10% transparency** and opens after hovering over the tray icon for **1 second**. Quick passes keep it hidden.
+
+**B. Tested:** Saved settings survive reload; hover timing, transparency and dragging passed live checks. **20 behavior tests, 12 tray checks and Windows CI passed.** Published v0.1.5 on `main`, commit `0a8dc99`. [Report and file inventory](https://github.com/paras-lehana/llm-tray/blob/main/docs/tasks/2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md).
+
+**C. Your requests**
+
+| # | Pointer Task | Original Pointer Text | Status | What Was Done |
+|---|---|---|---|---|
+|1|Transparency|have bit transparency|DONE|10% default; adjustable 0–50%.|
+|2|Delayed appearance|icon is held for 1 second|DONE|One-second continuous hover; leaving resets it.|
+|3|Settings|all this configruable|DONE|Both controls available in Settings.|
+
+**D. Extras:** Updated documentation and the Settings screenshot. Clicking still opens/pins immediately.
+
+**E. Pending:** None for this request.
+
+**F. Adjust it:** Right-click the tray icon → **Settings** → **Hover delay** / **Panel transparency** → **Save settings**.
+
+**G. Copyable summary**
+
+```text
+LLM Tray — appearance preferences installed, version 0.1.5
+
+The detail panel now uses a subtle 10% transparency and waits until the pointer has rested over the tray icon for one second before opening. Passing over it briefly keeps it hidden, and moving away resets the waiting period. Clicking the icon still opens and pins the panel immediately.
+
+Both preferences are available in Settings. The hover delay can be set from zero to ten seconds, and transparency from zero to fifty percent. Settings itself remains opaque and easy to read. Saved preferences survive reloading the tray.
+
+Live checks covered hover timing, leaving and returning, saved preferences, actual transparency and smooth dragging. Automated checks also passed. The public repository includes updated instructions and a current Settings screenshot. The installed preferences are one second and 10%; use the tray’s right-click Settings menu to adjust them whenever needed.
+```
