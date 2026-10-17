@@ -16,6 +16,10 @@
   per-host tunnel recovery. Three new tunnel tests and twelve AHK checks pass.
   Fixed initial timer replacement found during deployment; actual startup logs
   now show connection setup after about 2s. Editor draft preserved.
+- 23:39 IST - Implementation e1716ea and source prerelease 0.1.4 published.
+  Windows CI39056683095 passes all 20 behavior tests and 12 AHK checks.
+  Audit: 47 files, zero findings; 62 relative links resolve. Shared lesson
+  fe2ba07 published separately; both hosts' shared instruction links check OK.
 
 [Report](tasks/2026-10-17-remote-recovery/2026-10-17-remote-recovery-v0.1.4.md).
 

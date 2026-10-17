@@ -8,7 +8,7 @@ Last updated:2026-10-17 (Asia/Kolkata).
 |2|2026-10-17|Smooth panel dragging|Bug Fix|Done|[Entry](#smooth-panel-dragging)|
 |3|2026-10-17|Remote profile and status border|Config / Bug Fix|Configured; picker verification pending|[Entry](#remote-profile-and-status-border)|
 |4|2026-10-17|Tray sign-in startup|Bug Fix|Done; published 0.1.3|[Entry](#tray-sign-in-startup)|
-|5|2026-10-17|Remote connection recovery|Bug Fix|Transport restored; publishing|[Entry](#remote-connection-recovery)|
+|5|2026-10-17|Remote connection recovery|Bug Fix|Restored; published 0.1.4; editor replay pending|[Entry](#remote-connection-recovery)|
 
 ## Tray-first controller and remote access
 
@@ -267,4 +267,50 @@ Preserve the existing editor draft and providers. Inspect model, tunnel and
 client logs independently; test actual remote streamed output.
 
 [Report and file inventory](tasks/2026-10-17-remote-recovery/2026-10-17-remote-recovery-v0.1.4.md).
-Canonical A-G closeout follows publication verification.
+Canonical A-G closeout:
+
+**A. Connection restored.** After reboot, the PC model was stopped and its SSH tunnel had failed to start. **Both are running now.**
+
+**B. Tested from the remote server:**
+
+| Test | Completed in |
+|---|---:|
+| Streamed reply without thinking | 1.8 seconds |
+| Streamed reply with thinking | 10.2 seconds |
+| Streamed tool call using remote VS Code's Node runtime | 14.1 seconds |
+
+These are small transport tests, not a full coding-workflow benchmark. Your normal thinking settings remain unchanged. **20 behavior tests, 12 tray checks and Windows CI passed.** Published `v0.1.4`, commit `e1716ea`. [Report and changed-file inventory](https://github.com/paras-lehana/llm-tray/blob/main/docs/tasks/2026-10-17-remote-recovery/2026-10-17-remote-recovery-v0.1.4.md).
+
+**C. Your request**
+
+| # | Pointer Task | Original Pointer Text | Status | What Was Done |
+|---|---|---|---|---|
+|1|Repair remote connection|this did not work...|DONE|Restored the model and tunnels; verified remote streaming and tool-call output.|
+
+**D. Additional fixes:** Enabled connection checks every **60 seconds**, with failure/recovery notifications and protection against overlapping attempts. Updated the public documentation and shared troubleshooting guidance.
+
+**E. Remaining verification**
+
+| Item | Status | Reason |
+|---|---|---|
+|Your original Copilot conversation|Not replayed|Preserved your chat; no editor input sent.|
+|Full reboot recovery|Not forced|Tested startup/retry behavior without restarting your PC.|
+
+**F. Next step:** Click **Try Again** in that chat. After a full reboot, **Ctrl+Alt+L** starts the model; tray startup reconnects the tunnels. Native idle sleep can wake automatically on the next message.
+
+**G. Copyable summary**
+
+```text
+LLM Tray - remote connection restored (version 0.1.4, live 17 October 2026, 23:39 IST)
+
+What's done
+- Found that the computer restart left the model stopped and the dedicated remote connection unavailable. Both are now running again.
+- Verified complete remote replies with thinking enabled and disabled, plus valid streamed function-call output using the remote editor's runtime. These checks took approximately two, ten and fourteen seconds respectively.
+- Added automatic connection checks every minute, failure and recovery notices, and safeguards against duplicate attempts. Existing thinking settings were preserved.
+- Published the fix, documentation and regression checks. Automated Windows validation passed.
+
+Suggested next steps
+- Retry the original editor conversation. It was preserved and was not automatically replayed during diagnosis.
+- Start the model once after a full computer restart. Automatic connection repair does not load the model itself.
+- Assess larger coding conversations separately: successful short connection tests do not establish their response time or correctness.
+```

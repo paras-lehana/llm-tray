@@ -115,7 +115,19 @@ The context-maintenance skill was applied to project regression rules and one
 shared troubleshooting lesson. Shared Codex/Claude routing remains unchanged;
 the shared lesson is published from an isolated checkout to preserve unrelated
 owner changes in the Windows instructions repository. No new dependencies.
+Shared troubleshooting commit: `fe2ba07` on copilot-configs main, with its own
+prompt/task logs. Both existing Linux hosts passed `install.sh --check` with
+all links OK. No shared import/installer changed and no cloud model smoke call
+was made. The owner's Windows checkout was not fast-forwarded over unrelated
+uncommitted changes; only this task's temporary edit there was removed after
+publishing the shared lesson from the isolated checkout.
 
 ## Publication receipt
 
-Public audit, commit and CI results will be recorded after publication.
+Implementation `e1716eac5f3bddc92711d436761cf79553fcb193` is published on main.
+[Windows CI 39056683095](https://github.com/paras-lehana/llm-tray/actions/runs/39056683095)
+passed all 20 behavior tests, 12 actual AHK checks, parsing, fresh installation
+and public audit. Local public audit: 47 tracked files, zero findings; 62 relative
+documentation links resolve. [Source prerelease v0.1.4](https://github.com/paras-lehana/llm-tray/releases/tag/v0.1.4)
+is published. Final passive inspection still reports the model Ready and both
+original restored tunnel PIDs alive; no duplicate tunnel has accumulated.
