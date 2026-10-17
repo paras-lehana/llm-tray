@@ -69,6 +69,7 @@ full-window drag option was already enabled and was not changed.
 |After: live model status|258|0 px|0 px|124.7 ms|
 |After: initially unpinned hover panel|261|0 px|0 px|124.0 ms|
 |After: fake endpoint delays five seconds|259|0 px|0 px|125.7 ms|
+|Final installed repeat, actual cursor also checked|258|0 px|0 px|123.6 ms|
 
 The path deliberately slows at its turns, so an unchanged integer position
 does not by itself indicate a stall. The before/after tracking error is the
@@ -122,6 +123,14 @@ was corrected to clear telemetry before each launch and delay five seconds.
 The corrected full run passed; failed fixture attempts are not counted as
 successful checks.
 
+One later repeat reported 17.2 px p95 / 523 px maximum error, with the window
+moving ahead of the commanded pointer path during its first second. That run
+did not sample the actual cursor, so external mouse input cannot be confirmed
+or excluded retrospectively. The probe now samples it and stops immediately
+on unexpected movement. The final eight-second repeat had no detected input
+interference and 0/0 px tracking error. This failed repeat is retained in the
+private traces rather than silently discarded.
+
 Read: project AGENTS, README, design, task/prompt logs, testing guide, existing
 AHK/backend test/CI/audit sources; shared Codex guide, platform rules, Claude
 topic router, Windows host facts, logging protocol and applicable v2 discovery,
@@ -131,4 +140,8 @@ was reviewed; this product-specific regression belongs in the project AGENTS,
 so neither adapter needed editing. Earlier unrelated shared-repository edits
 were left alone. Promotion drafts remain unchanged for this small bug fix.
 
-Publication and final audit receipts are recorded in the task log.
+Implementation: [f1a89ec](https://github.com/paras-lehana/llm-tray/commit/f1a89ec1500ab545cb4300e6a88ace0513a4cca1),
+main. [Windows CI 39050696922](https://github.com/paras-lehana/llm-tray/actions/runs/39050696922)
+passed. Public audit: 39 tracked files, zero findings; relative-link check:
+40 links, zero missing. Final documentation and probe refinements follow the
+implementation commit; publication receipts are recorded in the task log.

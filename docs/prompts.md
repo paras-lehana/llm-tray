@@ -6,6 +6,8 @@ Last updated:2026-10-17 (Asia/Kolkata).
 |---|---|---|---|---|---|
 |1|2026-10-17|Tray-first controller and remote access|Feature|Published; remote UI pending|[Entry](#tray-first-controller-and-remote-access)|
 
+|2|2026-10-17|Smooth panel dragging|Bug Fix|Done|[Entry](#smooth-panel-dragging)|
+
 ## Tray-first controller and remote access
 
 Project:llm-tray; branch:main; owner authorized a separate public GitHub repo.
@@ -76,4 +78,57 @@ Suggested next steps
 - Verify one small file-reading conversation in each remote workspace before a large coding task.
 - Use idle unloading during normal work and the manual stop control when memory is needed immediately.
 - Assess editor response time separately; this release does not resolve the previously observed slow replies.
+```
+
+
+## Smooth panel dragging
+
+Date: 2026-10-17, 22:16 IST. Project: llm-tray; branch: main.
+Type: Bug Fix. Files changed: 14.
+
+### Original prompt
+
+> the dragging is not smooth
+
+### Pre-flight context
+
+- Test the actual Windows panel, including movement during status checks (project: llm-tray).
+- Preserve the running model and editor drafts (project AGENTS.md).
+- Record and publish the fix with its test results (existing public repository).
+
+UI interaction and context-maintenance skills were applied. Read-source details,
+full file inventory and failed attempts are in the linked task report.
+
+### Canonical closeout
+
+**A. Done:** Fixed and installed. Hold the panel’s title to drag it; movement now starts immediately on mouse-down.
+
+**B. Verified:** Live and slow-endpoint drag tests passed with **0 px sampled tracking error**. All 13 backend tests and 11 status checks passed, along with position persistence and Windows CI. Drag/status code, regression tests, CI and documentation are updated; no runtime dependencies added. Published fix: [f1a89ec](https://github.com/paras-lehana/llm-tray/commit/f1a89ec1500ab545cb4300e6a88ace0513a4cca1). [Full report and file inventory](https://github.com/paras-lehana/llm-tray/blob/main/docs/tasks/2026-10-17-smooth-drag/2026-10-17-smooth-drag-v0.1.1.md).
+
+**C. Request status**
+
+| # | Pointer Task | Original Pointer Text | Status | What Was Done |
+|---|---|---|---|---|
+|1|Smooth dragging|the dragging is not smooth|DONE|Fixed drag initiation and blocking status checks.|
+
+**D. Additional findings:** The previous test checked only the final position. New tests measure continuous movement and detect mouse interference. Your model stayed running.
+
+**E. Pending:** None for this fix. Movement between monitors with different scaling remains untested.
+
+**F. Suggestion:** Keep the slow-endpoint movement test in future release checks.
+
+**G. Forwardable summary**
+
+```text
+LLM Tray — dragging fix installed (version 0.1.1, 17 October 2026)
+
+What's done
+- The panel now starts moving when its title is pressed and follows the pointer while held. Dragging also pins the panel, and its position survives restarting the controller.
+- Slow model-status checks no longer block movement. Resource meters pause during dragging and resume after release.
+- Movement was tested with the running model and a deliberately delayed test server. The final recorded checks showed no sampled position error. Existing controller tests and automated Windows checks also passed.
+- The model stayed running throughout the fix. The public repository includes the changes, repeatable checks and a report documenting both successful and failed test attempts.
+
+Suggested next steps
+- Keep continuous dragging and delayed-response checks in future releases.
+- Test movement between differently scaled monitors before claiming support for that setup.
 ```

@@ -59,7 +59,9 @@ To measure your already-running tray, find its PID and run:
 The explicit opt-in probe sends mouse input only after checking the target is
 an LLMTray.ahk process and its panel is under the pointer. It pins/opens the
 panel, traces a path, saves sampled pointer/window positions, and restores the
-original location. It leaves the panel pinned. `-UseVisiblePanel` instead
+original location. If the actual pointer leaves the commanded path, it stops
+and marks the run inconclusive rather than fighting the user's mouse. It
+leaves the panel pinned. `-UseVisiblePanel` instead
 starts with an already-visible hover panel to test automatic pinning. It fails
 on p95 tracking error above 12 px or unchanged position over 150 ms. These are
 regression thresholds, not display-frame-rate or physical mouse latency claims.

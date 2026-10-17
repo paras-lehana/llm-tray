@@ -19,6 +19,12 @@
 
 [Drag fix report](tasks/2026-10-17-smooth-drag/2026-10-17-smooth-drag-v0.1.1.md).
 
+- 22:14 IST — Published implementation f1a89ec on main; Windows CI39050696922
+  passes, including actual AHK status checks. Forty relative links resolve.
+- 22:16 IST — One anomalous repeat is retained in the report. Added actual
+  cursor sampling and immediate stop on interference; final eight-second run
+  passes at 0/0 px, no interference. Tray unpinned; model left running.
+
 ## 2026-10-17 - Tray-first controller and remote workspaces
 
 Implementation published as b1356f3 on main; Windows CI39045470914 passed. Version0.1.0.
