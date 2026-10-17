@@ -24,6 +24,9 @@
 - 22:16 IST — One anomalous repeat is retained in the report. Added actual
   cursor sampling and immediate stop on interference; final eight-second run
   passes at 0/0 px, no interference. Tray unpinned; model left running.
+- 22:18 IST — Probe refinement and canonical closeout pushed as ce641cc.
+  [Version 0.1.1](https://github.com/paras-lehana/llm-tray/releases/tag/v0.1.1)
+  is the source prerelease for this fix; runtime/model dependencies stay external.
 
 ## 2026-10-17 - Tray-first controller and remote workspaces
 

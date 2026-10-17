@@ -5,7 +5,6 @@ Last updated:2026-10-17 (Asia/Kolkata).
 | # | Date | Topic | Type | Status | Link |
 |---|---|---|---|---|---|
 |1|2026-10-17|Tray-first controller and remote access|Feature|Published; remote UI pending|[Entry](#tray-first-controller-and-remote-access)|
-
 |2|2026-10-17|Smooth panel dragging|Bug Fix|Done|[Entry](#smooth-panel-dragging)|
 
 ## Tray-first controller and remote access
