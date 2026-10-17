@@ -7,7 +7,7 @@ Last updated:2026-10-17 (Asia/Kolkata).
 |1|2026-10-17|Tray-first controller and remote access|Feature|Published; remote UI pending|[Entry](#tray-first-controller-and-remote-access)|
 |2|2026-10-17|Smooth panel dragging|Bug Fix|Done|[Entry](#smooth-panel-dragging)|
 |3|2026-10-17|Remote profile and status border|Config / Bug Fix|Configured; picker verification pending|[Entry](#remote-profile-and-status-border)|
-|4|2026-10-17|Tray sign-in startup|Bug Fix|Installed and verified; publishing|[Entry](#tray-sign-in-startup)|
+|4|2026-10-17|Tray sign-in startup|Bug Fix|Done; published 0.1.3|[Entry](#tray-sign-in-startup)|
 
 ## Tray-first controller and remote access
 
@@ -213,4 +213,40 @@ installer, shared guide/router/logging protocol and context-maintenance skill.
 Project regression guidance updated; shared adapters still point to it.
 
 [Forwardable report and file inventory](tasks/2026-10-17-sign-in-startup/2026-10-17-sign-in-startup-v0.1.3.md).
-Canonical A-G closeout follows publication verification.
+Canonical A-G closeout:
+
+**A. Fixed:** The icon is running beside the clock and is now configured to start automatically whenever you sign into Windows.
+
+**B. Verified:** The startup entry was missing. Added a [Windows sign-in shortcut](https://support.microsoft.com/en-gb/windows/experience/startup-boot/configure-startup-applications-in-windows) pointing to your existing installation. Repeated launches leave one tray; hover and settings preservation passed. **17 tests, 11 tray-status checks and Windows CI passed.** Published `v0.1.3`, commit `ac46b56`. [Report and changed-file inventory](https://github.com/paras-lehana/llm-tray/blob/main/docs/tasks/2026-10-17-sign-in-startup/2026-10-17-sign-in-startup-v0.1.3.md).
+
+**C. Your request**
+
+| # | Pointer Task | Original Pointer Text | Status | What Was Done |
+|---|---|---|---|---|
+|1|Restore persistent tray|cant see the icon after restart, please we need it everytime..|DONE|Enabled sign-in startup and verified the actual shortcut and visible icon.|
+
+**D. Additional work:** Added reusable startup enable/disable controls, regression tests and documentation. Starting the tray does not load the model.
+
+**E. Remaining verification**
+
+| Item | Status | Reason |
+|---|---|---|
+|Full reboot check|Deferred|Tested the exact startup shortcut without interrupting your session.|
+
+**F. Recommendation:** Keep tray startup enabled. Use **Ctrl+Alt+L** when you want to start the model; its current orange border reflects the stopped model.
+
+**G. Copyable summary**
+
+```text
+LLM Tray - available automatically after Windows sign-in (version 0.1.3, installed 17 October 2026, 23:20 IST)
+
+What's done
+- Fixed the missing startup registration that left the tray absent after a restart. The icon is running and visible beside the Windows clock.
+- The existing model selection, resource display and shortcut settings are preserved. Starting the tray does not automatically load the model or reserve its graphics memory.
+- Reopening the launcher leaves one tray instance. The actual icon and hover panel were checked, and automated Windows checks passed.
+- The public project now includes startup controls, setup instructions and regression coverage.
+
+Suggested next steps
+- Leave tray startup enabled and use the model toggle when needed.
+- Confirm the icon returns after the next normal restart. A full reboot was deliberately not forced during the current session; verification used the exact registered startup launcher.
+```

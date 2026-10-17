@@ -97,4 +97,11 @@ Windows host, testing and Git guidance had been read earlier in this session.
 
 ## Publication receipt
 
-Implementation, public audit and CI receipt will be recorded after publication.
+Implementation **ac46b564d5cc4abdbd09492523b3620cf720945e** is published on main.
+[Windows CI 39055357160](https://github.com/paras-lehana/llm-tray/actions/runs/39055357160)
+passed, including a fresh portable install, behavior tests, native AHK status
+checks and content audit. Local public audit: 45 tracked files, zero findings;
+56 relative documentation links resolve. The production icon was also found
+beside the overflow arrow on the main taskbar, rather than only in overflow.
+[Source prerelease v0.1.3](https://github.com/paras-lehana/llm-tray/releases/tag/v0.1.3)
+is published. No signed executable or model weights are bundled.

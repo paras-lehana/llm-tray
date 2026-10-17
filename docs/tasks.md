@@ -13,6 +13,9 @@
 - 23:16 IST - Production-only hover/show/hide passes. Windows lists LLM Tray
   in Startup; installer opt-in and normal rerun preserve settings/registration.
   No model loaded. Six PowerShell parsers and AHK syntax validation pass.
+- 23:20 IST - Implementation ac46b56 pushed to main; Windows CI39055357160
+  passes. Public audit: 45 files, zero findings; 56 relative links resolve.
+  Version 0.1.3 published. Icon verified on the main taskbar beside overflow.
 
 [Report](tasks/2026-10-17-sign-in-startup/2026-10-17-sign-in-startup-v0.1.3.md).
 
