@@ -1,5 +1,23 @@
 # Task log
 
+Last updated: 2026-10-18 (Asia/Kolkata).
+
+## 2026-10-18 - Hover delay and transparency
+
+| # | Task | Status | Notes |
+|---|---|---|---|
+|1|Subtle widget transparency|Done|10% installed; actual alpha 230; tested 0% and 25% too.|
+|2|One-second hover|Done|Brief passes hidden; leave resets timer; final measured opening 1052 ms.|
+|3|Settings controls|Done|Saved alternate values through actual controls, restored 1 s / 10%.|
+
+- 23:56 IST (17 October) - Reloaded the tray with shared dwell and native alpha.
+- 00:02 IST - Native Settings save/reload and four timing runs pass.
+- 00:03 IST - Eight-second drag: p95/max error 0/0 px, 258 samples.
+- 00:05 IST - 20 behavior tests and 12 AHK status/recovery checks pass.
+- Reviewed Settings screenshot; private config remains at 1000 ms and 10%.
+
+[Report](tasks/2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md).
+
 ## 2026-10-17 - Remote connection recovery
 
 | # | Task | Status | Notes |
@@ -122,3 +140,16 @@ Legacy lab docs63379c8 pushed,37tests pass15.233s; public audit171files/0finding
 Canonical A-G summary is saved in prompts.md. The published report distinguishes
 configured remote transport from pending fresh editor verification. No social
 posting was performed; the0.1.0source release is marked preliminary.
+
+
+## Agent Deferred
+
+| # | Item | Deferred On | Reason | Status |
+|---|---|---|---|---|
+|1|Hover/transparency request|2026-10-18|All requested implementation completed; no new deferred item.|Done|
+
+## Agent Suggestions
+
+| # | Suggestion | Raised On | Priority | Status |
+|---|---|---|---|---|
+|1|Keep 1 second / 10% initially; adjust in Settings for preference or readability.|2026-10-18|Low|Available to owner|

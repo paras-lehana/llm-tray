@@ -1,5 +1,7 @@
 # Repository map
 
+- [Hover/transparency report](../docs/tasks/2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md).
+
 - [README](../README.md): install, controls, limits and links.
 - [AGENTS](../AGENTS.md): maintenance and native validation rules.
 - [Claude adapter](../CLAUDE.md) and [Copilot adapter](copilot-instructions.md).

@@ -23,8 +23,9 @@ concurrent-operation lock without making an external SSH connection.
 
 Use a dedicated controller instance, preserve other applications and test:
 
-1. Start with the panel hidden; hover the actual tray icon, move to the panel,
-   then away. It must show and hide without starting inference.
+1. Start with the panel hidden; a brief pass must keep it hidden. A continuous
+   hover opens it after the configured delay (default 1 second). Leaving and
+   re-entering must restart the delay. Move away; it hides without inference.
 2. Hover the general overflow arrow: it must not open this model's panel.
 3. Pin, move and reload; verify position. Unpin and move away; it must hide.
    Hold the title and trace a continuous path for at least eight seconds. The
@@ -32,6 +33,9 @@ Use a dedicated controller instance, preserve other applications and test:
    with an initially unpinned hover panel.
 4. Open Settings, change a metric and shortcut, save, verify both. Use a custom
    data directory to detect lost arguments on reload. Restore the default.
+   Also save alternate hover delays and 0%, 10% and 25% transparency; verify
+   persisted values, actual open timing and Windows alpha (255, 230, 191).
+   The Settings dialog remains opaque. Restore 1 second and 10% afterwards.
 5. Toggle a real controlled model through shortcut and status click. Check
    API identity, exact process lifecycle and notification result.
 6. Verify unavailable GPU data is labeled, and all status/usage colors are

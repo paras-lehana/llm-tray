@@ -2,11 +2,11 @@
 
 A little Windows tray meter for a large local model.
 
-VRAM, RAM and GPU usage live in the notification area. Hover for exact values;
+VRAM, RAM and GPU usage live in the notification area. Hover for a second for exact values;
 pin and drag the panel when you want it to stay. Toggle your model with a
 shortcut, choose your own launcher, and give the GPU back when you are done.
 
-**Windows 11 · AutoHotkey v2 · NVIDIA metrics · MIT · v0.1.4**
+**Windows 11 · AutoHotkey v2 · NVIDIA metrics · MIT · v0.1.5**
 
 ![LLM Tray showing a ready model, memory use and pin controls](assets/panel-ready.png)
 
@@ -58,13 +58,13 @@ first argument. Keep all data/binaries in `local-data/` or outside the checkout.
 
 | Action | Result |
 |---|---|
-| Hover the icon | Show exact VRAM/RAM/GPU values and model state |
+| Hover the icon for 1 second | Show exact VRAM/RAM/GPU values and model state |
 | Move away | Hide the panel, unless pinned |
 | Pin icon / tray click | Keep the panel visible |
 | Drag the header | Move and pin; position survives restart |
 | Click model status | Start/wake or stop/unload |
 | **Ctrl + Alt + L** | Toggle globally; Windows notification reports the result |
-| Right-click → Settings | Choose metrics, profile, shortcut and warning levels |
+| Right-click → Settings | Choose metrics, profile, shortcut, hover delay, transparency and warning levels |
 | Escape / close | Hide and unpin; model keeps its current state |
 | Exit tray | Quit the controller; model keeps running |
 
@@ -75,6 +75,11 @@ button. The pin applies to the detail panel, not Windows' tray visibility.
 Drag by holding the panel title. Movement starts on mouse-down; meter updates
 pause while you move it and resume on release. Slow status requests run
 asynchronously, so they do not hold the panel still. Dragging also pins it.
+
+The panel is slightly transparent (10%) by default. In **Settings**, choose a
+hover delay from 0–10 seconds and transparency from 0–50%. A quick mouse pass
+keeps it hidden; leaving the icon resets the delay. Clicking to pin still opens
+it immediately. The Settings dialog itself stays opaque.
 
 ![Native configuration dialog](assets/settings.png)
 
@@ -100,6 +105,7 @@ For example, a guarded launcher can retain its own memory/temperature checks.
 - [0.1.2 remote profile fix and status border](docs/tasks/2026-10-17-remote-profile-border/2026-10-17-remote-profile-border-v0.1.2.md).
 - [0.1.3 sign-in startup fix](docs/tasks/2026-10-17-sign-in-startup/2026-10-17-sign-in-startup-v0.1.3.md).
 - [0.1.4 remote connection recovery](docs/tasks/2026-10-17-remote-recovery/2026-10-17-remote-recovery-v0.1.4.md).
+- [0.1.5 hover delay and transparency](docs/tasks/2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md).
 
 ## Sleep, stop and context
 

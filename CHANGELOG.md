@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.5 - 2026-10-18
+
+- Wait for a continuous one-second hover before opening the detail panel;
+  leaving resets the timer, while deliberate click/pin remains immediate.
+- Add subtle 10% panel transparency, configurable from 0–50%, and a 0–10 second
+  hover delay in Settings. Preserve both through configuration reload.
+- Keep Settings and the tray icon opaque; verify live dwell, saved preferences
+  and smooth dragging with the layered panel.
+
 ## 0.1.4 - 2026-10-17
 
 - Add opt-in periodic connection helpers, asynchronous exit monitoring, and

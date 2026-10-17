@@ -22,6 +22,17 @@ Built-in llama.cpp creates and owns a server; custom profiles call reviewed
 PowerShell scripts; Ollama loads/unloads one model through its existing daemon.
 Monitoring is passive and independent of lifecycle ownership.
 
+Automatic opening requires a continuous one-second dwell over the actual tray
+button. Both Windows mouse-move callbacks and the 100 ms hover poll share that
+rule; leaving clears it. Deliberate click/pin bypasses the delay. Settings offers
+0–10 seconds, with the field disabled when automatic hover is off.
+
+The detail panel uses native layered-window alpha: 10% transparent by default,
+configurable from 0–50%. Settings and the tray icon remain opaque. This is not
+acrylic blur; text is composited too. No animation or extra dependency is needed.
+The default is intentionally subtle; stronger transparency depends on the
+underlying desktop and can reduce readability.
+
 The title starts the Windows move loop on WM_LBUTTONDOWN, not a release-time
 Text Click callback. During movement, status completion, metrics and hover
 work are deferred; WM_EXITSIZEMOVE schedules one position save. Status uses

@@ -1,6 +1,6 @@
 # Prompt log - LLM Tray
 
-Last updated:2026-10-17 (Asia/Kolkata).
+Last updated:2026-10-18 (Asia/Kolkata).
 
 | # | Date | Topic | Type | Status | Link |
 |---|---|---|---|---|---|
@@ -9,6 +9,7 @@ Last updated:2026-10-17 (Asia/Kolkata).
 |3|2026-10-17|Remote profile and status border|Config / Bug Fix|Configured; picker verification pending|[Entry](#remote-profile-and-status-border)|
 |4|2026-10-17|Tray sign-in startup|Bug Fix|Done; published 0.1.3|[Entry](#tray-sign-in-startup)|
 |5|2026-10-17|Remote connection recovery|Bug Fix|Restored; published 0.1.4; editor replay pending|[Entry](#remote-connection-recovery)|
+|6|2026-10-18|Hover delay and transparency|Feature|Installed; publication checks in progress|[Entry](#hover-delay-and-transparency)|
 
 ## Tray-first controller and remote access
 
@@ -314,3 +315,23 @@ Suggested next steps
 - Start the model once after a full computer restart. Automatic connection repair does not load the model itself.
 - Assess larger coding conversations separately: successful short connection tests do not establish their response time or correctness.
 ```
+
+
+## Hover delay and transparency
+
+Original request:
+> have bit transparency on the widget, also make it appear only when the icon is held for 1 second, make all this configruable also in settings.
+
+Pre-flight: native Windows project llm-tray on main; preserve the active model,
+remote connections and editor drafts. Shared logging and project native QA rules
+apply. Use the UI design skill for readability/interaction; no browser surface.
+Interpret the icon hold as continuous pointer hover and state that to the owner.
+
+Read: project AGENTS, README, DESIGN, tasks/prompts, configuration/testing;
+maintained Codex guide and shared router/platform/logging sources already read
+in this session; UI design skill and its motion/interaction reference.
+The previous task's canonical closeout was verified before resuming.
+
+[Report and complete changed-file inventory](tasks/2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md).
+Native dwell, settings persistence, alpha, drag, 20 behavior tests, 12 actual AHK
+fixture checks and syntax/parsing pass. Canonical closeout follows publication.

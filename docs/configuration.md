@@ -9,7 +9,7 @@ Changing profiles never silently stops one model or starts another.
 ## UI preferences
 
 Right-click the icon → **Settings** for profile, shortcut, enabled metrics,
-hover, notifications and warning thresholds. Save applies them by reloading.
+hover delay, panel transparency, notifications and warning thresholds. Save applies them by reloading.
 Other choices can be edited in `config.ini`:
 
 | Key in `[ui]` | Default | Meaning |
@@ -22,6 +22,8 @@ Other choices can be edited in `config.ini`:
 |`warning_percent `|`70`|Amber threshold|
 |`critical_percent `|`90`|Red threshold; must exceed warning|
 |`hover `|`1`|Automatic detail panel on hover|
+|`hover_delay_ms`|`1000`|Continuous hover before opening, 0–10000 ms; Settings displays seconds. Leaving resets the timer.|
+|`panel_transparency_percent`|`10`|Whole-panel transparency, 0–50%; 0 is opaque. Does not affect the tray icon or Settings.|
 |`notifications `|`1`|Native action notices; Windows DND still applies|
 |`pinned `|`0`|Persistent panel; pin/drag updates it|
 |`connection_script `|empty|Optional trusted`.ps1` run at UI startup and via Reconnect menu|
@@ -35,6 +37,13 @@ supports Ctrl/Alt/Shift; use the INI for Windows-key combinations.
 The status dot is green for Ready, amber for Sleeping/Working/Loading and red
 for Offline/Unloaded. Unavailable metrics are gray. Readiness means the endpoint
 reports its model loaded, not that no other client has queued a request.
+
+The hover delay applies to automatic opening only; clicking to open/pin remains
+immediate. Disable hover if you want manual opening only. Delay 0 opens on the
+next check (about 100 ms), not with a hard real-time guarantee. Windows scheduling
+can add a little to any chosen delay. Transparency is ordinary whole-window
+alpha, including text, not background blur. Use a lower percentage if your
+wallpaper makes the panel harder to read. Settings stays opaque for legibility.
 
 ## llama.cpp
 

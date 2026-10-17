@@ -25,6 +25,10 @@ optional SSH tunnels. Config/state/binaries belong outside Git in local-data/.
 
 ## Browser Test Cases / Native Equivalents
 - Actual tray hover reveals panel; moving away hides it; click/pin retains it.
+- Brief passes must not open the panel; continuous hover waits the configured
+  dwell and leaving resets it. Windows tray callbacks must not bypass the timer.
+  Check saved delay/transparency after reload and actual layered-window alpha;
+  Settings and the tray icon stay opaque. Recheck dragging with transparency on.
 - Drag a pinned panel, restart, verify position persists and is on-screen.
 - Hold the title and trace a continuous path: the panel must track while the
   button is down, including slow/offline status endpoints. Measure tracking
@@ -59,3 +63,5 @@ forwardable task report and changelog. Visible closeout includes owner A-G.
 Sleep discards live KV; the client must resend history. Whole-GPU metrics
 include games and other apps. The controller does not improve model latency.
 Windows may put a new tray icon in overflow; users can drag it beside the clock.
+
+[Hover/transparency behavior and evidence](docs/tasks/2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md).

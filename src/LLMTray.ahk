@@ -23,6 +23,8 @@ WarningLevel := Max(1,Min(99,Number(IniRead(Config,'ui','warning_percent',70))))
 CriticalLevel := Max(WarningLevel+1,Min(100,Number(IniRead(Config,'ui','critical_percent',90))))
 Pinned := !!Integer(IniRead(Config,'ui','pinned',0))
 HoverEnabled := !!Integer(IniRead(Config,'ui','hover',1))
+HoverDelay := Max(0,Min(10000,Round(Number(IniRead(Config,'ui','hover_delay_ms',1000)))))
+PanelTransparency := Max(0,Min(50,Integer(IniRead(Config,'ui','panel_transparency_percent',10))))
 Notifications := !!Integer(IniRead(Config,'ui','notifications',1))
 MetricKeys := [], MetricValues := Map(), MetricLabels := Map('vram','VRAM','ram','RAM','gpu','GPU'), Percent := Map('vram',-1,'ram',-1,'gpu',-1)
 for key in StrSplit(IniRead(Config,'ui','metrics','vram,ram,gpu'),',') {
@@ -31,6 +33,7 @@ for key in StrSplit(IniRead(Config,'ui','metrics','vram,ram,gpu'),',') {
         MetricKeys.Push(key)
 }
 ActionPid := 0, LastState := '', State := 'Checking', LastHover := 0, Visible := false, SettingsOpen := false
+HoverStarted := 0
 Dragging := false, StatusRequest := 0, StatusStarted := 0, ServerState := 'Checking'
 ConnectionHandle := 0, ConnectionState := ''
 MetricText := Map('ram','Unavailable','vram','Unavailable','gpu','Unavailable')
@@ -49,6 +52,10 @@ try {
 PanelWidth := 490
 Panel := Gui('+AlwaysOnTop -Caption +ToolWindow','LLM Tray - Model resources')
 Panel.BackColor := '16202D'
+previousHidden := A_DetectHiddenWindows
+DetectHiddenWindows true
+WinSetTransparent Round(255*(100-PanelTransparency)/100),'ahk_id ' Panel.Hwnd
+DetectHiddenWindows previousHidden
 Panel.SetFont('s9 cAABACB','Segoe UI')
 Title := Panel.AddText('x16 y10 w330 h24 +0x100','LLM TRAY   /   ' PrettyHotkey(Shortcut))
 Panel.SetFont('s12 cE8EFF7','Segoe Fluent Icons')
@@ -196,7 +203,8 @@ WorkArea(x,y) {
     return [l,t,r,b]
 }
 ShowPanel(saved:=false) {
-    global Panel,Visible,Config,PanelWidth,LastHover
+    global Panel,Visible,Config,PanelWidth,LastHover,HoverStarted
+    HoverStarted := 0
     CoordMode 'Mouse','Screen'
     MouseGetPos &mx,&my
     r := TrayRect(), scale := A_ScreenDPI/96
@@ -219,7 +227,8 @@ ShowPanel(saved:=false) {
     Log('panel_show x=' x ' y=' y)
 }
 HidePanel(unpin:=false) {
-    global Panel,Visible,Pinned,Config,PinButton
+    global Panel,Visible,Pinned,Config,PinButton,HoverStarted
+    HoverStarted := 0
     if unpin {
         Pinned := false
         IniWrite 0,Config,'ui','pinned'
@@ -287,17 +296,26 @@ SavePosition() {
     }
 }
 HoverWatch() {
-    global Visible,Pinned,LastHover,Panel,SettingsOpen,HoverEnabled,Dragging
-    if Dragging || (Visible && (Pinned || SettingsOpen))
+    global Visible,Pinned,LastHover,Panel,SettingsOpen,HoverEnabled,Dragging,HoverStarted,HoverDelay
+    if Dragging || (Visible && (Pinned || SettingsOpen)) {
+        HoverStarted := 0
         return
+    }
     CoordMode 'Mouse','Screen'
     MouseGetPos &x,&y
     r := TrayRect()
     if !Visible {
-        if HoverEnabled && !SettingsOpen && r && x>=r[1] && x<=r[3] && y>=r[2] && y<=r[4] && IsOurTrayButton(r)
-            ShowPanel()
+        if HoverEnabled && !SettingsOpen && r && x>=r[1] && x<=r[3] && y>=r[2] && y<=r[4] && IsOurTrayButton(r) {
+            if !HoverStarted
+                HoverStarted := A_TickCount
+            if A_TickCount-HoverStarted>=HoverDelay
+                ShowPanel()
+        } else {
+            HoverStarted := 0
+        }
         return
     }
+    HoverStarted := 0
     if Pinned || SettingsOpen
         return
     Panel.GetPos(&px,&py,&pw,&ph)
@@ -326,14 +344,16 @@ IsOurTrayButton(rect) {
     }
 }
 TrayEvent(wParam,lParam,msg,hwnd) {
-    global HoverEnabled,Visible,LastHover,Pinned
+    global HoverEnabled,Visible,LastHover,Pinned,HoverStarted,SettingsOpen
     if hwnd!=A_ScriptHwnd
         return
     event := lParam & 0xFFFF
     if event=0x200 && HoverEnabled {
         LastHover := A_TickCount
-        if !Visible
-            SetTimer (*) => ShowPanel(),-1
+        ; Windows mouse-move callbacks must not bypass the dwell timer.
+        ; HoverWatch verifies the actual icon and resets when the pointer leaves.
+        if !Visible && !SettingsOpen && !HoverStarted
+            HoverStarted := A_TickCount
     } else if event=0x202 {
         SetTimer OpenPinned,-1
         return 0
@@ -586,7 +606,7 @@ ConnectionOutcome(ok,detail) {
         Notify('Remote access restored. The model must also be running before chatting.')
 }
 OpenSettings() {
-    global SettingsOpen,ActionPid,DataDir,Config,Shortcut,MetricKeys,ProfileName,HoverEnabled,Notifications,WarningLevel,CriticalLevel
+    global SettingsOpen,ActionPid,DataDir,Config,Shortcut,MetricKeys,ProfileName,HoverEnabled,Notifications,WarningLevel,CriticalLevel,HoverDelay,PanelTransparency
     if SettingsOpen || ActionPid
         return
     SettingsOpen := true
@@ -605,6 +625,13 @@ OpenSettings() {
     for key in ['vram','ram','gpu']
         checks[key] := options.AddCheckBox('xm Checked' Integer(Has(MetricKeys,key)),StrUpper(key))
     hover := options.AddCheckBox('xm y+12 Checked' Integer(HoverEnabled),'Open panel when hovering over tray icon')
+    options.AddText('xm y+10','Hover delay (seconds, 0 = immediate)')
+    delay := options.AddEdit('xm w80',Format('{:.2f}',HoverDelay/1000))
+    delay.Enabled := hover.Value
+    hover.OnEvent('Click',(*) => delay.Enabled := hover.Value)
+    options.AddText('xm y+10','Panel transparency (0-50%, 0 = opaque)')
+    transparency := options.AddEdit('xm w80 Number',PanelTransparency)
+    options.AddUpDown('Range0-50',PanelTransparency)
     notices := options.AddCheckBox('xm Checked' Integer(Notifications),'Show action notifications')
     options.AddText('xm y+12','Warning / critical usage (%)')
     warn := options.AddEdit('xm w80 Number',WarningLevel)
@@ -632,6 +659,14 @@ OpenSettings() {
             MsgBox 'Use thresholds from 1–100; warning must be below critical.','Thresholds'
             return
         }
+        if !IsNumber(delay.Value) || Number(delay.Value)<0 || Number(delay.Value)>10 {
+            MsgBox 'Use a hover delay from 0 to 10 seconds.','Hover delay'
+            return
+        }
+        if !IsInteger(transparency.Value) || Integer(transparency.Value)<0 || Integer(transparency.Value)>50 {
+            MsgBox 'Use a whole-number transparency from 0 to 50 percent.','Transparency'
+            return
+        }
         try {
             if newKey!=Shortcut && !CanRegisterHotkey(newKey)
                 throw Error('Shortcut is already in use')
@@ -654,6 +689,8 @@ OpenSettings() {
         IniWrite newKey,Config,'ui','hotkey'
         IniWrite choice.Text,Config,'ui','profile'
         IniWrite hover.Value,Config,'ui','hover'
+        IniWrite Round(Number(delay.Value)*1000),Config,'ui','hover_delay_ms'
+        IniWrite transparency.Value,Config,'ui','panel_transparency_percent'
         IniWrite notices.Value,Config,'ui','notifications'
         IniWrite warn.Value,Config,'ui','warning_percent'
         IniWrite critical.Value,Config,'ui','critical_percent'
