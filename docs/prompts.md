@@ -33,7 +33,7 @@ A. **Published and running:** [LLM Tray](https://github.com/paras-lehana/llm-tra
 - Small tray icon with VRAM/RAM/GPU meters and model status.
 - Hover for details; pin and drag the panel when needed.
 - **Ctrl+Alt+L** toggles your model. Right-click → **Settings** changes metrics, shortcut and profile.
-- Both remote workspaces can reach your PC model. Select **PC Qwen3.6 Q4 – Thinking – 128K – SSH** under **PC Qwen over SSH**. Fresh editor conversations remain untested.
+- Both remote workspaces can reach your PC model. Select **PC Qwen3.6 Q4 - Thinking - 128K - SSH** under **PC Qwen over SSH**. Fresh editor conversations remain untested.
 
 B. **Implementation and tests:** native AutoHotkey/PowerShell controller, configurable llama.cpp/Ollama/custom-script profiles, SSH helper, installer and documentation. Your Qwen settings, 128K context and 30-minute idle sleep remain unchanged.
 
@@ -77,4 +77,3 @@ Suggested next steps
 - Use idle unloading during normal work and the manual stop control when memory is needed immediately.
 - Assess editor response time separately; this release does not resolve the previously observed slow replies.
 ```
-
