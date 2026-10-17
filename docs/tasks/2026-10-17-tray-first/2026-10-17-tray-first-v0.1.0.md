@@ -17,13 +17,13 @@ SSH connections. Public source: https://github.com/paras-lehana/llm-tray.
 
 | # | Pointer Task | Original Pointer Text | Status | What Was Done |
 |---|---|---|---|---|
-|1|Remote model access|“configure locall llm on my remote server too”|PARTIALLY DONE|Both remote hosts answer through SSH; Copilot entry added. Fresh editor conversation not typed.|
 |2|Tray hover panel|“widget looks good if i hover above the icon in taskbar”|DONE|Panel hidden by default; actual hover/leave checked.|
 |3|Pin and drag|“show pin icon…pined…dragging possible”|DONE|Pin control, draggable header, persisted position.|
 |4|Compact resource icon|“icon size, small VRAM RAM GPU stuff in rows and that ready icon”|DONE|V/R/G rows and status dot; exact numbers in panel.|
 |5|Public repository|“make a public github repo”|DONE|Independent public LLM Tray repository.|
 |6|Customization|“choose what to show…change shortcut…which llm to start”|DONE|Native Settings and INI profiles; llama.cpp, Ollama, custom scripts.|
 |7|Guide and promotion|“good readme and promotion”|DONE|Installation/config/remote guides and LinkedIn/Medium drafts; no social posting.|
+|1|Remote model access|“configure locall llm on my remote server too”|PARTIALLY DONE|Both remote hosts answer through SSH; Copilot entry added. Fresh editor conversation not typed.|
 
 ## Implementation and decisions
 
@@ -55,7 +55,8 @@ installation/data stays on the E-drive. No Windows boot startup is added.
 | Check | Evidence / limit |
 |---|---|
 |Native tray hover|Actual icon → panel → leave → hide → hover passes.|
-|Pin and drag|Actual pin persists; drag moved panel from 1740,1023 to 750,780.|
+|Pin and drag|Actual pin persists; drag moved panel from 1740,1023 to 750,780. Actual tray click pins and unpin hides.|
+|Unavailable GPU|Selecting a nonexistent GPU index labels both GPU and VRAM Unavailable while RAM/state work; GPU0 restored.|
 |Settings|Actual save hides GPU and changes shortcut; reload preserves private data path and pinned position. Defaults restored.|
 |Global shortcut|Ctrl+Alt+L and Ctrl+Alt+Shift+L stop/start pass. Occupied Ctrl+Alt+M is refused; Ctrl+Alt+L restored.|
 |Power click|Actual status click stops then starts the monitored model; both final action results succeed.|
@@ -105,8 +106,11 @@ Raw checks remain in private local-data/. Published panel and Settings crops wer
 visually reviewed, and their exact hashes are allowlisted. All code is Windows
 native; browser/mobile web checks are inapplicable. Launch drafts contain
 1145 LinkedIn characters and 1441 Medium words before metadata/title options.
-Neither draft was posted to a social account. CI/publication status is recorded
-in the prompt closeout and task log.
+Neither draft was posted to a social account. Implementation b1356f3 passed
+[Windows CI39045470914](https://github.com/paras-lehana/llm-tray/actions/runs/39045470914).
+The legacy lab documentation is updated in63379c8; its37tests pass15.233s
+and171-file publication audit has zero findings. New repo audit covers36files
+with zero findings;31relative Markdown links resolve.
 
 ## Remaining limits and next steps
 
@@ -140,3 +144,43 @@ available independently. Reconnect is explicit after network loss.
 > can we change shortcut, configure which llm to start (maybe people can make
 > a simple script, or point it to it, or b y default we give popular option like
 > llama etc).
+
+
+## Published file inventory
+
+- `.github/README.md`
+- `.github/copilot-instructions.md`
+- `.github/workflows/ci.yml`
+- `.gitignore`
+- `AGENTS.md`
+- `CHANGELOG.md`
+- `CLAUDE.md`
+- `LICENSE`
+- `README.md`
+- `THIRD_PARTY.md`
+- `assets/SHA256SUMS`
+- `assets/panel-ready.png`
+- `assets/settings.png`
+- `assets/tray-icon.png`
+- `docs/DESIGN.md`
+- `docs/configuration.md`
+- `docs/linkedin.md`
+- `docs/medium.md`
+- `docs/prompts.md`
+- `docs/remote-access.md`
+- `docs/tasks.md`
+- `docs/tasks/2026-10-17-tray-first/2026-10-17-tray-first-v0.1.0.md`
+- `docs/tasks/README.md`
+- `docs/testing.md`
+- `examples/config.ini`
+- `examples/profiles/custom.ini`
+- `examples/profiles/llama.ini`
+- `examples/profiles/ollama.ini`
+- `examples/tunnels.json`
+- `install.ps1`
+- `scripts/audit.py`
+- `scripts/tunnels.ps1`
+- `src/Backend.ps1`
+- `src/LLMTray.ahk`
+- `src/control.ps1`
+- `tests/test_backend.py`

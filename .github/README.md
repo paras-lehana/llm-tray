@@ -2,6 +2,7 @@
 
 - [README](../README.md): install, controls, limits and links.
 - [AGENTS](../AGENTS.md): maintenance and native validation rules.
+- [Claude adapter](../CLAUDE.md) and [Copilot adapter](copilot-instructions.md).
 - [Changelog](../CHANGELOG.md), [license](../LICENSE), [third parties](../THIRD_PARTY.md).
 - [Configuration](../docs/configuration.md): UI preferences and backend profiles.
 - [Remote access](../docs/remote-access.md): loopback SSH and editor setup.
