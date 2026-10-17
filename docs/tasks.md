@@ -1,5 +1,21 @@
 # Task log
 
+## 2026-10-17 - Tray sign-in startup
+
+| # | Task | Status | Notes |
+|---|---|---|---|
+|1|Restore the tray after restart|Done|Startup entry installed; exact shortcut launched and native hover verified. Full next reboot not forced.|
+
+- 23:14 IST - Registered the existing installation for user sign-in and launched
+  the exact shortcut. Its custom data directory and Qwen profile are preserved.
+- 23:15 IST - Repeated shortcut launch leaves one tray. Seventeen controller/
+  startup tests pass in 30.016s; eleven actual AHK status checks pass.
+- 23:16 IST - Production-only hover/show/hide passes. Windows lists LLM Tray
+  in Startup; installer opt-in and normal rerun preserve settings/registration.
+  No model loaded. Six PowerShell parsers and AHK syntax validation pass.
+
+[Report](tasks/2026-10-17-sign-in-startup/2026-10-17-sign-in-startup-v0.1.3.md).
+
 ## 2026-10-17 - Remote profile and tray border
 
 | # | Task | Status | Notes |

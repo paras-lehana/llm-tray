@@ -12,3 +12,5 @@
 - [Smooth drag report](../docs/tasks/2026-10-17-smooth-drag/2026-10-17-smooth-drag-v0.1.1.md).
 - [Native drag probe](../tests/measure-drag.ps1) and [AHK status checks](../tests/check_tray_status.py).
 - [Remote profile and border report](../docs/tasks/2026-10-17-remote-profile-border/2026-10-17-remote-profile-border-v0.1.2.md).
+- [Sign-in startup report](../docs/tasks/2026-10-17-sign-in-startup/2026-10-17-sign-in-startup-v0.1.3.md).
+- [Startup manager](../scripts/startup.ps1) and [shortcut regression tests](../tests/test_startup.py).

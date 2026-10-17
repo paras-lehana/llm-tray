@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.3 - 2026-10-17
+
+- Add explicit tray startup at user sign-in through `install.ps1 -StartAtSignIn`
+  or `scripts/startup.ps1 -Action Enable`, with Status and Disable commands.
+- Preserve the selected data directory and settings; refuse foreign startup
+  entries and avoid duplicate registrations. Startup does not load a model.
+- Add Windows shortcut regression tests and instructions for Startup apps,
+  tray overflow and moving/removing an installation.
+
 ## 0.1.2 — 2026-10-17
 
 - Add a visible green tray frame for Ready and orange for all other states;

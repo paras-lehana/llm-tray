@@ -7,6 +7,7 @@ Last updated:2026-10-17 (Asia/Kolkata).
 |1|2026-10-17|Tray-first controller and remote access|Feature|Published; remote UI pending|[Entry](#tray-first-controller-and-remote-access)|
 |2|2026-10-17|Smooth panel dragging|Bug Fix|Done|[Entry](#smooth-panel-dragging)|
 |3|2026-10-17|Remote profile and status border|Config / Bug Fix|Configured; picker verification pending|[Entry](#remote-profile-and-status-border)|
+|4|2026-10-17|Tray sign-in startup|Bug Fix|Installed and verified; publishing|[Entry](#tray-sign-in-startup)|
 
 ## Tray-first controller and remote access
 
@@ -194,3 +195,22 @@ Suggested next steps
 - Switch to the Windows desktop containing the remote development windows and select the configured Qwen model.
 - Complete one small chat there. Connection tests passed, but the actual model-picker check is still pending.
 ```
+
+
+## Tray sign-in startup
+
+Original request:
+> cant see the icon after restart, please we need it everytime..
+
+Project: llm-tray; branch: main. User explicitly requested persistent startup.
+The previous default opt-out is not an approval gate for this request. Keep
+installed files/data on the E-drive; use the standard per-user Windows Startup
+shortcut. Start the tray without loading a model. No editor input or reboot.
+
+Pre-flight: after reboot there was no tray process or startup entry. Read
+project AGENTS, README, DESIGN, configuration/testing/task/prompt logs, the
+installer, shared guide/router/logging protocol and context-maintenance skill.
+Project regression guidance updated; shared adapters still point to it.
+
+[Forwardable report and file inventory](tasks/2026-10-17-sign-in-startup/2026-10-17-sign-in-startup-v0.1.3.md).
+Canonical A-G closeout follows publication verification.

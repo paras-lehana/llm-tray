@@ -1,5 +1,5 @@
-﻿# Pinned, portable AutoHotkey installer. No model download or boot startup.
-param([string]$InstallDir=(Join-Path $PSScriptRoot 'local-data\runtime'),[string]$DataDir=(Join-Path $PSScriptRoot 'local-data'))
+﻿# Pinned, portable AutoHotkey installer. Sign-in startup is explicitly opt-in.
+param([string]$InstallDir=(Join-Path $PSScriptRoot 'local-data\runtime'),[string]$DataDir=(Join-Path $PSScriptRoot 'local-data'),[switch]$StartAtSignIn)
 $ErrorActionPreference='Stop'
 $destinationRoot=[IO.Path]::GetFullPath($InstallDir).TrimEnd('\')
 $dataPath=[IO.Path]::GetFullPath($DataDir).TrimEnd('\')
@@ -61,4 +61,10 @@ $shortcut.WorkingDirectory=$dataPath
 $shortcut.Description='LLM Tray: hover for resources, Ctrl+Alt+L to toggle your model'
 $shortcut.Save()
 @{version=$version;archive_sha256=$expected;executable_sha256=$expectedExe.ToLower();executable=$exe;data=$dataPath;source=$url} | ConvertTo-Json | Set-Content -Encoding UTF8 -LiteralPath (Join-Path $dataPath 'installation.json')
-Write-Output "Installed. Edit $profiles\llama.ini, then open $dataPath\LLM Tray.lnk. No startup entry or model start added."
+if ($StartAtSignIn) {
+    & (Join-Path $PSScriptRoot 'scripts\startup.ps1') -Action Enable -DataDir $dataPath
+    Write-Output 'Tray sign-in startup registered. This does not start a model.'
+} else {
+    Write-Output 'Sign-in startup unchanged. Use -StartAtSignIn to opt in.'
+}
+Write-Output "Installed. Edit $profiles\llama.ini, then open $dataPath\LLM Tray.lnk. No model started."

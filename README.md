@@ -6,7 +6,7 @@ VRAM, RAM and GPU usage live in the notification area. Hover for exact values;
 pin and drag the panel when you want it to stay. Toggle your model with a
 shortcut, choose your own launcher, and give the GPU back when you are done.
 
-**Windows 11 · AutoHotkey v2 · NVIDIA metrics · MIT · v0.1.2**
+**Windows 11 · AutoHotkey v2 · NVIDIA metrics · MIT · v0.1.3**
 
 ![LLM Tray showing a ready model, memory use and pin controls](assets/panel-ready.png)
 
@@ -36,7 +36,19 @@ before clicking Start. The example's20 layers / 8K context are placeholders, not
 fit guarantee. An older llama.cpp may not support native idle sleep; check its
 help and startup log. The installer pins AutoHotkey 2.0.30, verifies its archive
 and executable, and preserves existing settings. No admin rights, system PATH
-change, boot startup, model download or initial model start.
+change, model download or initial model start. Sign-in startup is opt-in.
+
+**Keep the tray after a restart:** run this once for an existing installation:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\startup.ps1 -Action Enable
+```
+
+If you installed with a custom `-DataDir`, pass that same directory here. New
+installs can use `install.ps1 -StartAtSignIn`. Windows then launches the tray
+when you sign in; the model stays under your normal manual/idle controls.
+Use `-Action Status` to inspect registration or `-Action Disable` to remove it.
+Keep the checkout, runtime and data folder in place. See [startup details](docs/configuration.md#startup-and-removal).
 
 Already have AutoHotkey v2? Copy `examples/config.ini ` and ` examples/profiles/`
 into a private data folder, then launch `src/LLMTray.ahk` with that folder as its
@@ -86,6 +98,7 @@ For example, a guarded launcher can retain its own memory/temperature checks.
 - [Release task report](docs/tasks/2026-10-17-tray-first/2026-10-17-tray-first-v0.1.0.md).
 - [0.1.1 drag fix and measurements](docs/tasks/2026-10-17-smooth-drag/2026-10-17-smooth-drag-v0.1.1.md).
 - [0.1.2 remote profile fix and status border](docs/tasks/2026-10-17-remote-profile-border/2026-10-17-remote-profile-border-v0.1.2.md).
+- [0.1.3 sign-in startup fix](docs/tasks/2026-10-17-sign-in-startup/2026-10-17-sign-in-startup-v0.1.3.md).
 
 ## Sleep, stop and context
 

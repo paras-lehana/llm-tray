@@ -98,11 +98,36 @@ identify models or native sleep. Prefer the protocol-specific mode.
 
 ## Startup and removal
 
-The installer does not add boot startup. If you want only the tray at login,
-copy its shortcut into the Windows Startup folder yourself. The UI does not
-start a model on launch. An optional connection_script is trusted code, so its
-behavior is yours to define; the provided SSH example only opens tunnels.
+Sign-in startup is an explicit choice. For a new install, use
+`install.ps1 -StartAtSignIn`. For an existing installation:
 
-To remove: exit the tray, stop any model through its appropriate controller if
-desired, remove your optional Startup shortcut, then remove this checkout and
-its private data folder. Models/runtimes outside that folder are independent.
+```powershell
+# Omit -DataDir if you use the default local-data folder.
+.\scripts\startup.ps1 -Action Enable -DataDir 'E:\llm\tray'
+.\scripts\startup.ps1 -Action Status -DataDir 'E:\llm\tray'
+.\scripts\startup.ps1 -Action Disable -DataDir 'E:\llm\tray'
+```
+
+Enable creates one **LLM Tray.lnk** in the current user's Windows Startup
+folder. Its target is the installed AutoHotkey executable; arguments preserve
+the checkout and data directory, including spaces. Repeating Enable updates
+that entry. Another configuration's shortcut is never overwritten or removed.
+No administrator rights or system service are required. Launching the shortcut
+again replaces the same tray instance instead of accumulating duplicates.
+
+This runs at **sign-in**, not before login. It follows Microsoft's documented
+[Startup-folder approach](https://support.microsoft.com/en-gb/windows/experience/startup-boot/configure-startup-applications-in-windows).
+`Status` reports registration; Windows **Settings > Apps > Startup** or Task
+Manager can independently disable it. If registered but not starting, check
+that Windows setting, confirm the source/runtime/data drive is available,
+and open the shortcut through `shell:startup` to check for an error. Disable
+the old entry before moving your checkout, then enable from the new location.
+
+The UI does not start a model on launch. An optional `connection_script` is
+trusted code, so its behavior is yours to define; the provided SSH example
+only opens tunnels. Windows may place the icon under **Show hidden icons**;
+drag this icon beside the clock to keep it visible outside overflow.
+
+To remove: disable startup using the command above, exit the tray, stop any
+model through its appropriate controller if desired, then remove this checkout
+and its private data folder. Models/runtimes outside that folder are independent.

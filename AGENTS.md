@@ -11,8 +11,9 @@ provide whole-device metrics. PowerShell handles explicit model actions and
 optional SSH tunnels. Config/state/binaries belong outside Git in local-data/.
 
 ## Critical Project Rules
-- Loopback only by default. No telemetry, credentials, model downloads, blanket
-  process-name kills, boot startup or model startup merely from launching UI.
+- Loopback only by default. No telemetry, credentials, model downloads or blanket
+  process-name kills. User sign-in startup is opt-in; never start a model merely
+  from launching the UI. An explicit user request authorizes enabling tray startup.
 - Exact process identity and creation time are required before stopping an
   owned child. Custom scripts are explicitly trusted user code.
 - Poll passive status only. Never wake sleeping llama.cpp through /slots.
@@ -38,6 +39,9 @@ optional SSH tunnels. Config/state/binaries belong outside Git in local-data/.
   verify its model registry and capability limits, then its model picker.
 - Tray frame is green only for Ready; it is orange for offline, sleeping,
   loading and unavailable states. Check actual rendered pixels at tray size.
+- Sign-in startup must preserve the custom data directory, be idempotent and
+  leave foreign shortcuts alone. Test launching the exact Startup shortcut,
+  one tray instance and no model load. Distinguish this from a real reboot test.
 
 ## Required Validation
 PowerShell parsing, offline controller tests, AutoHotkey /validate, actual

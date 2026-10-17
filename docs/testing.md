@@ -13,6 +13,9 @@ Ollama's load/unload contract and forbidden endpoint overrides. It never loads
 weights or sends editor conversations anywhere. CI also parses PowerShell,
 validates AutoHotkey syntax, exercises a fresh pinned installation and scans
 Git's publication set. This is not a clean-machine interactive desktop test.
+Startup tests create real shortcuts in an isolated folder: repeated enable,
+disable, paths with spaces, missing runtime and foreign-entry preservation.
+They never change the tester's real sign-in settings or launch an executable.
 
 ## Native acceptance
 
@@ -39,6 +42,12 @@ Use a dedicated controller instance, preserve other applications and test:
 9. Check the tray frame against Ready and Offline/Sleeping/Loading fixtures:
    green for Ready, orange otherwise. Verify both the rendered border and the
    descriptive tooltip; do not infer availability from resource usage bars.
+10. Opt into sign-in startup with a custom data directory. Launch the exact
+    Startup shortcut and confirm the profile, metrics and one tray instance;
+    launch it again and verify no duplicate or model load. Check registration
+    survives an installer rerun without the opt-in flag. Report a direct
+    shortcut test separately from a full sign-out/reboot, which requires the
+    user's agreement because it interrupts their session.
 
 ## Release evidence
 
