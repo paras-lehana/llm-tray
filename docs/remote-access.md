@@ -126,3 +126,19 @@ If Copilot reports a generic firewall/network error such as ECONNRESET:
 OpenSSH's [ExitOnForwardFailure](https://man.openbsd.org/ssh_config#ExitOnForwardFailure)
 checks creation of forwarding listeners; it does not prove the final model
 destination is reachable. Keep the model availability check separate.
+
+## Connection closed during an experiment
+
+Model replacement or benchmarking can stop the same listener used by remote
+chats. A live SSH forward may then accept a connection and close it when its
+destination is unavailable. Copilot can label this `other side closed` or a
+generic firewall error. Compare the client error timestamp with the model's
+stop receipt and active task log before editing any network settings.
+
+Announce downtime before stopping the shared model and let active requests
+finish. A brief idle gap between tool calls is not proof a conversation ended.
+Restore the production model after the experiment and check its identity,
+streamed thinking, function-call arguments, tool-result handling and final
+answer from the remote runtime. Preserve editor drafts; API success is still
+separate from a fresh editor conversation. See the
+[18 October incident](tasks/2026-10-18-remote-outage/2026-10-18-remote-outage-v1.0.md).

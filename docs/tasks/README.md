@@ -2,6 +2,7 @@
 
 | Date | Release | Report |
 |---|---|---|
+|2026-10-18|Operational report1.0|[Remote Copilot experiment interruption](2026-10-18-remote-outage/2026-10-18-remote-outage-v1.0.md)|
 |2026-10-18|0.1.5|[Hover delay and panel transparency](2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md)|
 |2026-10-17|0.1.4|[Remote connection recovery](2026-10-17-remote-recovery/2026-10-17-remote-recovery-v0.1.4.md)|
 |2026-10-17|0.1.3|[Tray sign-in startup](2026-10-17-sign-in-startup/2026-10-17-sign-in-startup-v0.1.3.md)|

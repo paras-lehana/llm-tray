@@ -2,6 +2,29 @@
 
 Last updated: 2026-10-18 (Asia/Kolkata).
 
+## 2026-10-18 - Remote Copilot experiment interruption
+
+| # | Task | Status | Notes |
+|---|---|---|---|
+|1|Investigate repeated remote connection failure|Diagnosed; current transport passes; fresh editor replay pending|Requested model stop interrupted an active remote chat. Configuration was already correct.|
+
+- 06:11–06:13 IST - Correlated00:21:01 requested stop with remote termination
+  at00:21:03 and repeated00:21–00:23 socket errors; three preceding Qwen UI
+  requests succeeded. The last model task had14492 input tokens, not a context
+  rejection. Current production process was already restored at06:01.
+- 06:13–06:15 IST - Installed remote Node/Undici: native-thinking greeting
+  11.629s, tool request20.676s, instruction-file final58.991s. All complete SSE
+  streams; correct tool arguments and all3 instruction answers.
+- 06:16 IST - Correct alias and131072 context through direct and mirrored URLs;
+  original production process remains. No editor typing or model restart.
+- Added experiment-downtime regression instructions and remote diagnosis
+  guidance. Private parent installation guidance updated; global adapters
+  already route to the relevant sources and are unchanged.
+- Validation:20 offline tests pass in30.594s, PowerShell parsing and AHK
+  validation pass;50published files audited clean and73relative links resolve.
+
+[Report](tasks/2026-10-18-remote-outage/2026-10-18-remote-outage-v1.0.md).
+
 ## 2026-10-18 - Hover delay and transparency
 
 | # | Task | Status | Notes |

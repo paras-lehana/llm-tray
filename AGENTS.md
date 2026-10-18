@@ -42,6 +42,12 @@ optional SSH tunnels. Config/state/binaries belong outside Git in local-data/.
 - After reboot/network loss, check both the model listener and the dedicated
   tunnel. A running SSH process alone does not prove the model is reachable.
   Verify streaming content and tool-call chunks from the remote client runtime.
+- For a remote failure during model experiments, correlate client timestamps
+  with the model's requested-stop receipt and live task log before changing
+  network settings. A shared model stop interrupts every remote workspace.
+  Announce experimental downtime and wait for active requests to finish;
+  an idle gap between tool turns is not proof the owner has finished chatting.
+  After restoration, verify a complete streamed tool-result/final-answer cycle.
 - Connection helpers must run initially even with periodic retries configured,
   never overlap, report failure/recovery, preserve foreign PIDs after reboot,
   and continue checking other hosts when one fails. Retry must not load a model.
