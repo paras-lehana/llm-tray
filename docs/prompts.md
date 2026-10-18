@@ -11,6 +11,8 @@ Last updated:2026-10-18 (Asia/Kolkata).
 |5|2026-10-17|Remote connection recovery|Bug Fix|Restored; published 0.1.4; editor replay pending|[Entry](#remote-connection-recovery)|
 |6|2026-10-18|Hover delay and transparency|Feature|Done; published 0.1.5|[Entry](#hover-delay-and-transparency)|
 
+|7|2026-10-18|Remote experiment outage|Infrastructure|Diagnosed; remote checks pass; editor retry pending|[Entry](#remote-experiment-outage)|
+
 ## Tray-first controller and remote access
 
 Project:llm-tray; branch:main; owner authorized a separate public GitHub repo.
@@ -365,3 +367,77 @@ Both preferences are available in Settings. The hover delay can be set from zero
 
 Live checks covered hover timing, leaving and returning, saved preferences, actual transparency and smooth dragging. Automated checks also passed. The public repository includes updated instructions and a current Settings screenshot. The installed preferences are one second and 10%; use the tray’s right-click Settings menu to adjust them whenever needed.
 ```
+
+
+## Remote experiment outage
+
+Project:llm-tray; branch:docs/remote-outage-20261018; evidence commit4717178.
+
+Original prompt (private host alias omitted):
+> still see this on [remote SSH host]
+
+Screenshot: repeated Autopilot recovery and `fetch failed: other side closed`,
+PC Qwen thinking/128K over SSH selected, time00:23.
+
+Pre-flight: follow project remote streaming checks, keep production available,
+preserve editor drafts and record evidence in the clean llm-tray repository.
+Project/parent AGENTS and shared Codex/Claude routing were read.
+The agent-context-maintenance skill owns the regression-rule update; existing
+global adapters already route to these sources and remain unchanged.
+
+Canonical visible response:
+
+**A. What happened**
+
+**I stopped the PC model during the experiment while Copilot was using it.** Sorry—that interrupted your remote chat.
+
+The stop was requested at **00:21:01**; Copilot logged the terminated request at **00:21:03**, followed by the errors in your screenshot. Qwen is running again.
+
+**B. What I verified**
+
+Through the remote VS Code runtime:
+
+- Thinking-enabled reply: **11.6 seconds**.
+- File-tool request and instruction-based answer: **79.7 seconds**, all three answers correct.
+- **20 controller tests passed**, plus PowerShell/AHK validation.
+
+The endpoint configuration was already correct. I updated the operational instructions and published the [incident report](https://github.com/paras-lehana/llm-tray/blob/main/docs/tasks/2026-10-18-remote-outage/2026-10-18-remote-outage-v1.0.md) with the evidence and file inventory. Evidence commit: `4717178`.
+
+**C. Your request**
+
+| Request | Status |
+|---|---|
+| Remote connection failure | Cause identified; current remote streaming passes |
+| Actual Copilot retry | Pending; editor left untouched |
+
+**D. Additional finding**
+
+The interrupted request contained approximately **14.5K tokens**. This failure was not a context-limit rejection.
+
+**E. Remaining check**
+
+| Check | Limitation |
+|---|---|
+| Fresh Copilot reply | I preserved your no-editor-typing instruction |
+
+**F. Next step**
+
+Click **Try Again** in the same chat. Keep the same model selected. I’ve left it running and recorded that experiment downtime must be announced and active requests allowed to finish.
+
+**G. Copyable summary**
+
+```text
+Local model access — interruption identified and remote connection verified
+
+What's done
+- The failed remote chat was traced to an experiment stopping the PC model while a conversation was active. Successful replies immediately before the stop, followed by connection failures, confirm the interruption.
+- The normal model is available again. Fresh checks from the remote editor's runtime completed a thinking-enabled reply and a two-step instruction-file exchange.
+- The model answered all three instruction questions correctly. Its existing context and thinking settings remain in place.
+- The incident report records the evidence and requires future experiment downtime to be announced, active requests allowed to finish, and remote access checked after restoration.
+
+Suggested next steps
+- Retry the failed conversation with the same selected model.
+- Keep experimental outages separate from everyday coding sessions.
+- Treat the fresh editor reply as the remaining confirmation; the assistant preserved the user's instruction not to type into the editor.
+```
+
