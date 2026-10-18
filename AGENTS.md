@@ -37,6 +37,12 @@ optional SSH tunnels. Config/state/binaries belong outside Git in local-data/.
 - Settings reload must preserve a non-default data directory and pinned position.
 - Tray menu and global shortcut toggle with notifications and correct state.
 - Manual Stop frees model memory; Sleep stays wakeable by the next request.
+- Each VRAM/RAM/GPU brush must invoke Stop, never Toggle; repeated cleanup must
+  not start a model. Verify native mouse/Space activation, busy-state exclusion,
+  a failed unload, and Settings hide/show through reload. All cleanup stays
+  scoped to the configured model; do not guess other processes are disposable.
+  Measure real cleanup only when it will not interrupt the owner's active chat;
+  preserve the configured model afterward and label an unrun live check honestly.
 - Refuse foreign/stale process receipts; no second start under concurrency.
 - Remote SSH endpoint returns the PC model and answers a small request.
 - After reboot/network loss, check both the model listener and the dedicated
@@ -69,5 +75,8 @@ forwardable task report and changelog. Visible closeout includes owner A-G.
 Sleep discards live KV; the client must resend history. Whole-GPU metrics
 include games and other apps. The controller does not improve model latency.
 Windows may put a new tray icon in overflow; users can drag it beside the clock.
+Ollama inventories can include unrelated entries with only `name` or `model`.
+Check optional properties before accessing them under PowerShell StrictMode;
+transport exceptions also need not contain an HTTP `Response` property.
 
 [Hover/transparency behavior and evidence](docs/tasks/2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md).

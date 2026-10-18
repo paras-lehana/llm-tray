@@ -38,6 +38,8 @@ class BackendTests(unittest.TestCase):
                     body = {'model_alias': 'foreign' if other else 'fixture', 'is_sleeping': not state['loaded']}
                 elif self.path in ('/api/ps', '/api/tags'):
                     body = {'models': [{'name': 'fixture', 'model': 'fixture'}] if (state['installed'] if self.path.endswith('tags') else state['loaded']) else []}
+                    if state.get('name_only'):
+                        body['models'] = [{'name': 'other-app-model'}] + [{'name': m['name']} for m in body['models']]
                 else:
                     self.send_error(404); return
                 self.send_response(200); self.send_header('Content-Type', 'application/json'); self.end_headers(); self.wfile.write(json.dumps(body).encode())
@@ -99,6 +101,18 @@ Get-OwnedServer '{self.folder/'process.json'}' $profile
         state['installed'] = False
         self.assertIn('not installed', self.ps(f"Invoke-ModelAction (Read-ModelProfile '{p}') Start '{self.folder}'", ok=False))
         self.assertTrue(all(isinstance(x, str) for x in state['calls']))
+
+    def test_ollama_name_only_entries_and_unrelated_models(self):
+        p, state = self.endpoint(ollama=True)
+        state['name_only'] = True
+        self.assertEqual(self.ps(f"Get-ModelState (Read-ModelProfile '{p}')"), 'Ready')
+        self.assertEqual(self.ps(f"Invoke-ModelAction (Read-ModelProfile '{p}') Stop '{self.folder}'"), 'Unloaded')
+        self.assertFalse(state['loaded'])
+
+    def test_status_exception_without_http_response(self):
+        p, _ = self.endpoint()
+        self.assertEqual(self.ps("function Invoke-RestMethod { throw 'Synthetic transport error' }\n"
+                                 f"Get-ModelState (Read-ModelProfile '{p}')"), 'Offline')
 
     def test_custom_success_and_exit_failure(self):
         good, bad = self.folder/'good.ps1', self.folder/'bad.ps1'

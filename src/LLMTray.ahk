@@ -26,6 +26,8 @@ HoverEnabled := !!Integer(IniRead(Config,'ui','hover',1))
 HoverDelay := Max(0,Min(10000,Round(Number(IniRead(Config,'ui','hover_delay_ms',1000)))))
 PanelTransparency := Max(0,Min(50,Integer(IniRead(Config,'ui','panel_transparency_percent',10))))
 Notifications := !!Integer(IniRead(Config,'ui','notifications',1))
+ShowCleanup := !!Integer(IniRead(Config,'ui','cleanup_buttons',1))
+CleanupButtons := Map(), CleanupTip := 0, ActionKind := '', FeedbackUntil := 0
 MetricKeys := [], MetricValues := Map(), MetricLabels := Map('vram','VRAM','ram','RAM','gpu','GPU'), Percent := Map('vram',-1,'ram',-1,'gpu',-1)
 for key in StrSplit(IniRead(Config,'ui','metrics','vram,ram,gpu'),',') {
     key := Trim(key)
@@ -71,17 +73,29 @@ Power.OnEvent('Click',(*) => Act('Toggle'))
 Panel.SetFont('s9 Norm cAABACB')
 Hint := Panel.AddText('x16 y78 w155 h32','Click to start / stop')
 Hint.OnEvent('Click',(*) => Act('Toggle'))
+OnMessage(0x2B,DrawCleanupButton)
 for index,key in MetricKeys {
     x := 188 + (index-1)*96
     Panel.SetFont('s9 Norm cAABACB')
-    Panel.AddText('x' x ' y42 w94 h18',MetricLabels[key])
+    Panel.AddText('x' x ' y42 w60 h18',MetricLabels[key])
+    if ShowCleanup {
+        ; Native owner-drawn buttons retain descriptive accessibility names,
+        ; keyboard focus and Space activation while displaying a small brush.
+        brush := Panel.AddButton('x' (x+62) ' y38 w28 h24 +0xB','Free LLM resources (' MetricLabels[key] ')')
+        brush.OnEvent('Click',CleanResources.Bind(key))
+        CleanupButtons[brush.Hwnd] := brush
+    }
     Panel.SetFont('s11 Bold c86E3A7')
     MetricValues[key] := Panel.AddText('x' x ' y64 w94 h26','—')
     Panel.SetFont('s8 Norm cAABACB')
     Panel.AddText('x' x ' y91 w94 h18', key='gpu' ? 'utilization' : 'used / total GiB')
 }
 Panel.SetFont('s9 Norm cAABACB')
-Panel.AddText('x16 y120 w458 h20',ModelName)
+Feedback := Panel.AddText('x16 y120 w458 h20',ModelName)
+; AHK normalizes button types during AddButton. Apply owner-draw only after
+; all controls are created, through the native BM_SETSTYLE message.
+for hwnd,button in CleanupButtons
+    SendMessage 0xF4,0xB,1,hwnd
 Panel.OnEvent('Escape',(*) => HidePanel(true))
 Panel.OnEvent('Close',(*) => HidePanel(true))
 Panel.OnEvent('ContextMenu',(*) => A_TrayMenu.Show())
@@ -91,6 +105,7 @@ A_TrayMenu.Add('Unpin / hide panel',(*) => HidePanel(true))
 A_TrayMenu.Add('Toggle model  ·  ' PrettyHotkey(Shortcut),(*) => Act('Toggle'))
 A_TrayMenu.Add('Start / wake model',(*) => Act('Start'))
 A_TrayMenu.Add('Stop / unload model',(*) => Act('Stop'))
+A_TrayMenu.Add('Free LLM resources',(*) => CleanResources('all'))
 A_TrayMenu.Add()
 A_TrayMenu.Add('Settings…',(*) => OpenSettings())
 A_TrayMenu.Add('Edit model profile',(*) => Run('notepad.exe ' Q(Profile)))
@@ -125,6 +140,7 @@ if Pinned
 Refresh()
 SetTimer Refresh, Max(1,Min(60,Number(IniRead(Config,'ui','refresh_seconds',3))))*1000
 SetTimer HoverWatch, 100
+SetTimer CleanupHover, 100
 SetTimer FinishAction, 500
 SetTimer FinishStatusPoll, 50
 SetTimer FinishConnections, 500
@@ -444,7 +460,7 @@ FinishStatusPoll() {
     PaintStatus()
 }
 PaintStatus() {
-    global MetricText,ActionPid,State,ServerState,LastState,Palette,Power,Hint,DataDir,Visible,Pinned,Dragging
+    global MetricText,ActionPid,State,ServerState,LastState,Palette,Power,Hint,DataDir,Visible,Pinned,Dragging,CleanupButtons,Feedback,FeedbackUntil,ModelName,ActionKind
     if Dragging
         return
     values := MetricText
@@ -452,7 +468,14 @@ PaintStatus() {
     shade := State='Ready' ? 'green' : State='Offline' || State='Unloaded' ? 'red' : 'amber'
     Power.Text := '● ' State
     Power.SetFont('c' Palette[shade])
-    Hint.Text := State='Sleeping' ? 'Next message wakes me' : State='Working' ? 'Please wait…' : 'Click to start / stop'
+    Hint.Text := State='Sleeping' ? 'Next message wakes me' : State='Working' ? (ActionKind='Clean' ? 'Freeing LLM resources…' : 'Please wait…') : 'Click to start / stop'
+    for hwnd,button in CleanupButtons
+        button.Enabled := !ActionPid
+    if FeedbackUntil && A_TickCount>FeedbackUntil && !ActionPid {
+        Feedback.Text := ModelName
+        Feedback.SetFont('cAABACB')
+        FeedbackUntil := 0
+    }
     DrawTrayIcon(Palette[shade],Palette[State='Ready' ? 'green' : 'orange'])
     A_IconTip := 'LLM Tray: ' State '`nVRAM ' values['vram'] ' GiB | RAM ' values['ram'] ' GiB | GPU ' values['gpu']
     if State!=LastState {
@@ -524,28 +547,96 @@ DrawTrayIcon(stateColor,borderColor) {
         TraySetIcon 'HICON:' icon,,true
 }
 
+CleanResources(metric,*) {
+    ; All meters describe one device, so every brush uses the same scoped Stop.
+    ; Never toggle: a second cleanup must not load an already stopped model.
+    Log('cleanup=' metric)
+    Act('Clean')
+}
+CleanupHover() {
+    global CleanupButtons,CleanupTip,Visible,Dragging
+    MouseGetPos ,,,&control,2
+    hovered := Visible && !Dragging && CleanupButtons.Has(control) ? control : 0
+    if hovered=CleanupTip
+        return
+    CleanupTip := hovered
+    if hovered
+        ToolTip('Stop / unload the configured LLM to free RAM and VRAM.`nStops its current reply. Other apps stay open.')
+    else
+        ToolTip()
+}
+DrawCleanupButton(wParam,lParam,*) {
+    global CleanupButtons
+    hwnd := NumGet(lParam,A_PtrSize=8 ? 24 : 20,'Ptr')
+    if !CleanupButtons.Has(hwnd)
+        return
+    dc := NumGet(lParam,A_PtrSize=8 ? 32 : 24,'Ptr')
+    rect := lParam+(A_PtrSize=8 ? 40 : 28)
+    flags := NumGet(lParam,16,'UInt'), width := NumGet(rect,8,'Int'), height := NumGet(rect,12,'Int')
+    bg := DllCall('gdi32\CreateSolidBrush','UInt',flags&1 ? 0x544234 : 0x2D2016,'Ptr')
+    DllCall('user32\FillRect','Ptr',dc,'Ptr',rect,'Ptr',bg)
+    DllCall('gdi32\DeleteObject','Ptr',bg)
+    ; A simple outlined sweep brush; original vectors, no bitmap dependency.
+    pen := DllCall('gdi32\CreatePen','Int',0,'Int',Max(1,Round(height/15)),'UInt',flags&4 ? 0x807060 : 0xCBBAAA,'Ptr')
+    oldPen := DllCall('gdi32\SelectObject','Ptr',dc,'Ptr',pen,'Ptr')
+    oldBrush := DllCall('gdi32\SelectObject','Ptr',dc,'Ptr',DllCall('gdi32\GetStockObject','Int',5,'Ptr'),'Ptr')
+    shift := flags&1 ? 1 : 0
+    points := [[18,4],[11,11],[8,10],[3,16],[8,21],[14,16],[11,11]]
+    for index,p in points {
+        x := Round(p[1]*width/24)+shift, y := Round(p[2]*height/24)+shift
+        if index=1
+            DllCall('gdi32\MoveToEx','Ptr',dc,'Int',x,'Int',y,'Ptr',0)
+        else
+            DllCall('gdi32\LineTo','Ptr',dc,'Int',x,'Int',y)
+    }
+    DllCall('gdi32\MoveToEx','Ptr',dc,'Int',Round(6*width/24)+shift,'Int',Round(18*height/24)+shift,'Ptr',0)
+    DllCall('gdi32\LineTo','Ptr',dc,'Int',Round(10*width/24)+shift,'Int',Round(14*height/24)+shift)
+    DllCall('gdi32\SelectObject','Ptr',dc,'Ptr',oldPen)
+    DllCall('gdi32\SelectObject','Ptr',dc,'Ptr',oldBrush)
+    DllCall('gdi32\DeleteObject','Ptr',pen)
+    if flags&0x10
+        DllCall('user32\DrawFocusRect','Ptr',dc,'Ptr',rect)
+    return true
+}
 Act(action) {
-    global ActionPid,DataDir,ProfileName
+    global ActionPid,DataDir,ProfileName,ActionKind,Feedback,FeedbackUntil
     if ActionPid {
         Notify('A model action is already running.')
         return
     }
+    ActionKind := action
+    backendAction := action='Clean' ? 'Stop' : action
     result := DataDir '\action.ini'
     if FileExist(result)
         FileDelete result
-    Run 'powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ' Q(A_ScriptDir '\control.ps1') ' -DataDir ' Q(DataDir) ' -Profile ' ProfileName ' -Action ' action,, 'Hide', &ActionPid
-    Notify('Switching model state. The tray will update when ready.')
+    try Run 'powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ' Q(A_ScriptDir '\control.ps1') ' -DataDir ' Q(DataDir) ' -Profile ' ProfileName ' -Action ' backendAction,, 'Hide', &ActionPid
+    catch as err {
+        ActionPid := 0
+        Feedback.Text := 'Could not start action. Check the tray log.'
+        Feedback.SetFont('cFF9A9E'), FeedbackUntil := A_TickCount+30000
+        Log('action_launch_failed=' err.Message)
+        Notify(err.Message,true)
+        return
+    }
+    Feedback.Text := action='Clean' ? 'Stopping LLM to free resources. Other apps stay open.' : 'Changing model state…'
+    Feedback.SetFont('cFFD07D'), FeedbackUntil := 0
+    Notify(action='Clean' ? 'Freeing LLM resources. This stops its current reply.' : 'Switching model state. The tray will update when ready.')
     Log('action=' action ' pid=' ActionPid)
     Refresh()
 }
 FinishAction() {
-    global ActionPid,DataDir,Dragging
+    global ActionPid,DataDir,Dragging,ActionKind,Feedback,FeedbackUntil,ServerState
     if Dragging || !ActionPid || ProcessExist(ActionPid)
         return
     ActionPid := 0
     result := DataDir '\action.ini'
     status := IniRead(result,'result','status','error')
     message := IniRead(result,'result','message','No action result. Check the logs.')
+    if status!='error'
+        ServerState := status
+    Feedback.Text := status='error' ? 'Action failed. ' message : ActionKind='Clean' ? (status='Unloaded' ? 'LLM unloaded. Next message reloads it.' : 'LLM stopped. Start before chatting.') : message
+    Feedback.SetFont('c' (status='error' ? 'FF9A9E' : '86E3A7'))
+    FeedbackUntil := A_TickCount+30000
     Notify(message,status='error')
     Log('result=' status ' ' message)
     Refresh()
@@ -606,7 +697,7 @@ ConnectionOutcome(ok,detail) {
         Notify('Remote access restored. The model must also be running before chatting.')
 }
 OpenSettings() {
-    global SettingsOpen,ActionPid,DataDir,Config,Shortcut,MetricKeys,ProfileName,HoverEnabled,Notifications,WarningLevel,CriticalLevel,HoverDelay,PanelTransparency
+    global SettingsOpen,ActionPid,DataDir,Config,Shortcut,MetricKeys,ProfileName,HoverEnabled,Notifications,WarningLevel,CriticalLevel,HoverDelay,PanelTransparency,ShowCleanup
     if SettingsOpen || ActionPid
         return
     SettingsOpen := true
@@ -624,6 +715,7 @@ OpenSettings() {
     checks := Map()
     for key in ['vram','ram','gpu']
         checks[key] := options.AddCheckBox('xm Checked' Integer(Has(MetricKeys,key)),StrUpper(key))
+    cleanup := options.AddCheckBox('xm y+10 Checked' Integer(ShowCleanup),'Show LLM cleanup brushes beside metrics')
     hover := options.AddCheckBox('xm y+12 Checked' Integer(HoverEnabled),'Open panel when hovering over tray icon')
     options.AddText('xm y+10','Hover delay (seconds, 0 = immediate)')
     delay := options.AddEdit('xm w80',Format('{:.2f}',HoverDelay/1000))
@@ -692,6 +784,7 @@ OpenSettings() {
         IniWrite Round(Number(delay.Value)*1000),Config,'ui','hover_delay_ms'
         IniWrite transparency.Value,Config,'ui','panel_transparency_percent'
         IniWrite notices.Value,Config,'ui','notifications'
+        IniWrite cleanup.Value,Config,'ui','cleanup_buttons'
         IniWrite warn.Value,Config,'ui','warning_percent'
         IniWrite critical.Value,Config,'ui','critical_percent'
         CloseSettings()

@@ -43,3 +43,25 @@ These choices keep network waits and INI writes out of the drag path.
 No secret values are required. SSH uses existing identities and host checking.
 Optional tunnels listen on remote loopback only; they do not edit existing SSH
 sessions, containers, firewall rules or public routing.
+
+## Resource cleanup
+
+Job: reclaim the configured LLM's resources directly from the meter. Each metric
+header has a28x24native button showing an original outlined brush. It retains
+a descriptive name (`Free LLM resources (VRAM/RAM/GPU)`), native keyboard focus
+and Space activation. The brush is drawn with GDI vectors at the actual control
+size, avoiding a new font/image dependency. A tooltip states the stop/unload
+scope and interruption of the current reply. All three buttons mean the same
+model Stop action because those allocations cannot be independently discarded
+while keeping the same model running. Hover alone never invokes cleanup.
+
+Buttons disable during a model action; the status and footer show progress and
+the result. Success is based on the existing backend's stopped/unloaded state.
+The footer explains how to resume. It does not claim an exact amount reclaimed
+from whole-device counters. Settings can hide the brushes, and the explicit
+tray menu action remains available. The existing hover/transparency/drag layout
+is preserved. Brush ink uses the existing muted color on the existing panel.
+Measured ink/background contrast is8.29:1 opaque and6.63:1 at10% transparency
+over a white background. Disabled controls use a quieter treatment. Window
+rendering caught AHK normalizing AddButton's owner-draw style; BM_SETSTYLE is
+applied after construction, and the native test verifies it survives activation.

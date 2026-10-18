@@ -1,5 +1,8 @@
 # Repository map
 
+- [0.1.6 cleanup brushes report](../docs/tasks/2026-10-18-cleanup/2026-10-18-cleanup-v0.1.6.md)
+  and [native cleanup checks](../tests/check_cleanup.py).
+
 - [Hover/transparency report](../docs/tasks/2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md).
 
 - [README](../README.md): install, controls, limits and links.

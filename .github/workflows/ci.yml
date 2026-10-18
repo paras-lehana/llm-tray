@@ -29,5 +29,7 @@ jobs:
           if($p.ExitCode){throw 'AHK syntax check failed'}
           python tests/check_tray_status.py --ahk $receipt.executable --output "$env:RUNNER_TEMP\tray-status.json"
           if($LASTEXITCODE){throw 'Native tray status checks failed'}
+          python tests/check_cleanup.py --ahk $receipt.executable --output "$env:RUNNER_TEMP\cleanup-checks.json"
+          if($LASTEXITCODE){throw 'Native cleanup checks failed'}
       - name: Public content audit
         run: python scripts/audit.py

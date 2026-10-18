@@ -49,12 +49,16 @@ function Get-ModelState($Profile,[int]$Timeout=2) {
             return 'Ready'
         }
         if ($Profile.status -eq 'ollama') {
-            if (@($data.models | Where-Object { $_.name -eq $Profile.model_id -or $_.model -eq $Profile.model_id }).Count) { return 'Ready' }
+            if (@($data.models | Where-Object {
+                ($_.PSObject.Properties['name'] -and $_.name -eq $Profile.model_id) -or
+                ($_.PSObject.Properties['model'] -and $_.model -eq $Profile.model_id)
+            }).Count) { return 'Ready' }
             return 'Unloaded'
         }
         return 'Ready'
     } catch {
-        $response=$_.Exception.Response
+        # Non-HTTP failures may not expose Response under StrictMode.
+        $response=if ($_.Exception.PSObject.Properties['Response']) {$_.Exception.Response}else{$null}
         if ($response) {
             if ([int]$response.StatusCode -eq 503) { return 'Loading' }
             return 'Endpoint error'
@@ -134,7 +138,10 @@ function Invoke-ModelAction($Profile,[string]$Action,[string]$StateDir) {
     if ($Profile.backend -eq 'ollama') {
         if ($state -eq 'Offline') { throw 'Start the Ollama application first. The tray controls models, not its daemon.' }
         $installed=Invoke-RestMethod ($Profile.endpoint+'/api/tags') -TimeoutSec 5
-        if (-not @($installed.models | Where-Object { $_.name -eq $Profile.model_id -or $_.model -eq $Profile.model_id }).Count) { throw 'Configured Ollama model is not installed; pull it yourself first.' }
+        if (-not @($installed.models | Where-Object {
+            ($_.PSObject.Properties['name'] -and $_.name -eq $Profile.model_id) -or
+            ($_.PSObject.Properties['model'] -and $_.model -eq $Profile.model_id)
+        }).Count) { throw 'Configured Ollama model is not installed; pull it yourself first.' }
         $keep=if ($Action -eq 'Stop') {0}else{if($Profile.keep_alive){$Profile.keep_alive}else{'30m'}}
         $body=@{model=$Profile.model_id;prompt='';stream=$false;keep_alive=$keep} | ConvertTo-Json
         Invoke-RestMethod ($Profile.endpoint+'/api/generate') -Method Post -ContentType 'application/json' -Body $body -TimeoutSec 600 | Out-Null

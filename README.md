@@ -6,7 +6,7 @@ VRAM, RAM and GPU usage live in the notification area. Hover for a second for ex
 pin and drag the panel when you want it to stay. Toggle your model with a
 shortcut, choose your own launcher, and give the GPU back when you are done.
 
-**Windows 11 · AutoHotkey v2 · NVIDIA metrics · MIT · v0.1.5**
+**Windows 11 · AutoHotkey v2 · NVIDIA metrics · MIT · v0.1.6**
 
 ![LLM Tray showing a ready model, memory use and pin controls](assets/panel-ready.png)
 
@@ -63,6 +63,7 @@ first argument. Keep all data/binaries in `local-data/` or outside the checkout.
 | Pin icon / tray click | Keep the panel visible |
 | Drag the header | Move and pin; position survives restart |
 | Click model status | Start/wake or stop/unload |
+| Brush beside VRAM, RAM or GPU | Stop/unload the configured LLM and refresh readings |
 | **Ctrl + Alt + L** | Toggle globally; Windows notification reports the result |
 | Right-click → Settings | Choose metrics, profile, shortcut, hover delay, transparency and warning levels |
 | Escape / close | Hide and unpin; model keeps its current state |
@@ -80,6 +81,19 @@ The panel is slightly transparent (10%) by default. In **Settings**, choose a
 hover delay from 0–10 seconds and transparency from 0–50%. A quick mouse pass
 keeps it hidden; leaving the icon resets the delay. Clicking to pin still opens
 it immediately. The Settings dialog itself stays opaque.
+
+**Need memory back?** Click a brush beside any metric. Each brush stops the
+same configured LLM, releasing its model/KV allocations and ending its active
+reply. Other apps and unrelated model processes stay open. The controls disable
+while an action runs and show success or failure in the panel. This does not
+purge Windows caches or promise zero GPU usage; the meters include other apps.
+For llama.cpp, use Start or your shortcut before chatting again. An unloaded
+Ollama model can reload on its next request. Hide the brushes in Settings if
+you prefer the existing status/menu controls.
+
+![Cleanup brushes beside the resource metrics](assets/cleanup-controls.png)
+
+Rendered installed window; the live panel uses your chosen transparency.
 
 ![Native configuration dialog](assets/settings.png)
 
@@ -106,6 +120,7 @@ For example, a guarded launcher can retain its own memory/temperature checks.
 - [0.1.3 sign-in startup fix](docs/tasks/2026-10-17-sign-in-startup/2026-10-17-sign-in-startup-v0.1.3.md).
 - [0.1.4 remote connection recovery](docs/tasks/2026-10-17-remote-recovery/2026-10-17-remote-recovery-v0.1.4.md).
 - [0.1.5 hover delay and transparency](docs/tasks/2026-10-17-hover-transparency/2026-10-18-hover-transparency-v0.1.5.md).
+- [0.1.6 cleanup controls and validation](docs/tasks/2026-10-18-cleanup/2026-10-18-cleanup-v0.1.6.md).
 
 ## Sleep, stop and context
 

@@ -2,6 +2,29 @@
 
 Last updated: 2026-10-18 (Asia/Kolkata).
 
+## 2026-10-18 - Resource cleanup brushes
+
+| # | Task | Status | Notes |
+|---|---|---|---|
+|1|Brush beside VRAM/RAM/GPU|Implemented and installed|Native named controls, drawn brushes and Settings visibility tested.|
+|2|Free resources, at least the LLM|Implemented; live memory measurement deferred|All brushes call scoped Stop/unload; active remote chat preserved. No arbitrary app killing.|
+
+- Read project/shared guidance and UI design skill; branch
+  feat/resource-cleanup-20261018; native Windows scope.
+- Added unload-only brushes, progress/error feedback, disabled busy controls,
+  menu action and Settings visibility. Kept configured model lifecycle owner.
+- Native fixture exposed optional-field/exception StrictMode bugs in Ollama
+  status; fixed with two regressions. Render inspection caught normalized native
+  button styles; BM_SETSTYLE fixes the brushes, with style assertions added.
+- 22offline tests pass in55.104s;12actual AHK status checks and6native cleanup
+  checks pass. PowerShell parsing and AHK validation pass.
+- Actual Settings off/on/reload yields0/3buttons and preserves owner preferences.
+  Actual rendered window inspected; desktop capture shows lock screen. Physical
+  pointer/drag/toast validation pending; unlock requested. Remote Qwen remains
+  active and was not stopped for a memory-reclamation measurement.
+
+[Report](tasks/2026-10-18-cleanup/2026-10-18-cleanup-v0.1.6.md).
+
 ## 2026-10-18 - Remote Copilot experiment interruption
 
 | # | Task | Status | Notes |

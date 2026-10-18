@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.6 - 2026-10-18
+
+- Add brush buttons beside VRAM, RAM and GPU to stop/unload the configured
+  LLM and refresh device readings. All brushes use Stop, never Toggle.
+- Provide descriptive native button names, keyboard activation, tooltips,
+  progress/error feedback, busy-state exclusion and a Settings visibility toggle.
+- Preserve process ownership checks and other applications; no system-wide
+  process killing or cache purging. Manual llama.cpp cleanup requires Start
+  before another chat; Ollama's daemon can reload its unloaded model.
+- Handle Ollama entries with only a name and transport exceptions without an
+  HTTP Response property under PowerShell StrictMode.
+
 ## 0.1.5 - 2026-10-18
 
 - Wait for a continuous one-second hover before opening the detail panel;

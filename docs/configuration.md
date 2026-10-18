@@ -17,6 +17,7 @@ Other choices can be edited in `config.ini`:
 |`profile `|` llama `|Filename under profiles without`.ini`; letters/digits/dash/underscore|
 |`hotkey `|`^!l`|Ctrl+Alt+L; use native Settings to record a different combination|
 |`metrics `|` vram,ram,gpu`|Visible rows and their order; empty means status only|
+|`cleanup_buttons`|`1`|Show a brush beside each panel metric; all brushes stop/unload only the configured LLM. Also available in Settings.|
 |`refresh_seconds `|`3`|Resource/API refresh, clamped 1–60seconds|
 |`gpu_index `|`0`|NVIDIA device index; whole-device metrics|
 |`warning_percent `|`70`|Amber threshold|
@@ -37,6 +38,16 @@ supports Ctrl/Alt/Shift; use the INI for Windows-key combinations.
 The status dot is green for Ready, amber for Sleeping/Working/Loading and red
 for Offline/Unloaded. Unavailable metrics are gray. Readiness means the endpoint
 reports its model loaded, not that no other client has queued a request.
+
+Brushes and **Free LLM resources** in the tray menu run the profile's existing
+Stop action. This is deliberate: an already stopped model must never start
+because cleanup was clicked again. Cleanup uses the same process ownership,
+custom stop script or Ollama model identity checks as normal Stop. It ends any
+reply from that model, including a remote workspace's reply. Busy controls are
+disabled until the action finishes; failures remain visible and are logged.
+No other application is guessed to be disposable. Free GPU memory, system RAM,
+Windows file cache and current GPU activity are different measures; the readings
+are refreshed after the stop, not reset to artificial zeros.
 
 The hover delay applies to automatic opening only; clicking to open/pin remains
 immediate. Disable hover if you want manual opening only. Delay 0 opens on the

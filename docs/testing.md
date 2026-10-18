@@ -67,6 +67,7 @@ the actual AHK status checks without a model or mouse input:
 
 ```powershell
 python tests/check_tray_status.py --ahk .\local-data\runtime\AutoHotkey64.exe --output .\local-data\status-checks.json
+python tests/check_cleanup.py --ahk .\local-data\runtime\AutoHotkey64.exe --output .\local-data\cleanup-checks.json
 ```
 
 Supply the path to your installed AutoHotkey executable. Add `--drag` only on
@@ -78,6 +79,14 @@ The same suite also uses a disposable connection script: first exit fails,
 the next run lasts 15 seconds against a 10-second retry interval, and then
 succeeds. It checks initial-run timing, failure/recovery logs and no overlap.
 Notifications are disabled in this fixture; it does not assert a visible toast.
+
+The cleanup fixture targets actual native buttons in a disposable tray, using
+button messages and Space key messages. Its fake Ollama endpoint checks every
+brush, unload-only requests, disabled/repeated clicks, another model remaining
+listed, backend failure with visible error text, and the hide-buttons setting.
+It does not touch the desktop mouse or load/stop a real model. A separate live
+check must record the actual process/endpoint and device readings before/after;
+do not interrupt the owner's conversation to obtain that measurement.
 
 To measure your already-running tray, find its PID and run:
 
