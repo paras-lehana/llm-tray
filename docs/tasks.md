@@ -20,6 +20,8 @@ Last updated: 2026-10-18 (Asia/Kolkata).
 - Added experiment-downtime regression instructions and remote diagnosis
   guidance. Private parent installation guidance updated; global adapters
   already route to the relevant sources and are unchanged.
+- Publication: evidence4717178 and canonical closeout902e2a5 pushed to main
+  and docs/remote-outage-20261018. Model health remained OK afterward.
 - Validation:20 offline tests pass in30.594s, PowerShell parsing and AHK
   validation pass;50published files audited clean and73relative links resolve.
 

@@ -10,7 +10,6 @@ Last updated:2026-10-18 (Asia/Kolkata).
 |4|2026-10-17|Tray sign-in startup|Bug Fix|Done; published 0.1.3|[Entry](#tray-sign-in-startup)|
 |5|2026-10-17|Remote connection recovery|Bug Fix|Restored; published 0.1.4; editor replay pending|[Entry](#remote-connection-recovery)|
 |6|2026-10-18|Hover delay and transparency|Feature|Done; published 0.1.5|[Entry](#hover-delay-and-transparency)|
-
 |7|2026-10-18|Remote experiment outage|Infrastructure|Diagnosed; remote checks pass; editor retry pending|[Entry](#remote-experiment-outage)|
 
 ## Tray-first controller and remote access
@@ -405,10 +404,9 @@ The endpoint configuration was already correct. I updated the operational instru
 
 **C. Your request**
 
-| Request | Status |
-|---|---|
-| Remote connection failure | Cause identified; current remote streaming passes |
-| Actual Copilot retry | Pending; editor left untouched |
+| # | Pointer task | Original pointer text | Status | What was done |
+|---|---|---|---|---|
+| 1 | Remote model access | “still see this” | PARTIAL | Cause identified; remote streaming passes; fresh editor retry pending |
 
 **D. Additional finding**
 
@@ -440,4 +438,3 @@ Suggested next steps
 - Keep experimental outages separate from everyday coding sessions.
 - Treat the fresh editor reply as the remaining confirmation; the assistant preserved the user's instruction not to type into the editor.
 ```
-
