@@ -22,6 +22,9 @@ Last updated: 2026-10-18 (Asia/Kolkata).
   Actual rendered window inspected; desktop capture shows lock screen. Physical
   pointer/drag/toast validation pending; unlock requested. Remote Qwen remains
   active and was not stopped for a memory-reclamation measurement.
+- Published implementatione2602f1 and source prerelease0.1.6. Windows
+  CI39092829383 passes22offline tests,12status checks,6cleanup checks, installer,
+  syntax and audit.54public files audited clean;81relative links resolve.
 
 [Report](tasks/2026-10-18-cleanup/2026-10-18-cleanup-v0.1.6.md).
 

@@ -11,6 +11,7 @@ Last updated:2026-10-18 (Asia/Kolkata).
 |5|2026-10-17|Remote connection recovery|Bug Fix|Restored; published 0.1.4; editor replay pending|[Entry](#remote-connection-recovery)|
 |6|2026-10-18|Hover delay and transparency|Feature|Done; published 0.1.5|[Entry](#hover-delay-and-transparency)|
 |7|2026-10-18|Remote experiment outage|Infrastructure|Diagnosed; remote checks pass; editor retry pending|[Entry](#remote-experiment-outage)|
+|8|2026-10-18|Resource cleanup brushes|Feature|Installed0.1.6; live pointer/memory checks deferred|[Entry](#resource-cleanup-brushes)|
 
 ## Tray-first controller and remote access
 
@@ -437,4 +438,57 @@ Suggested next steps
 - Retry the failed conversation with the same selected model.
 - Keep experimental outages separate from everyday coding sessions.
 - Treat the fresh editor reply as the remaining confirmation; the assistant preserved the user's instruction not to type into the editor.
+```
+
+## Resource cleanup brushes
+
+Project:llm-tray; branch:feat/resource-cleanup-20261018; implementation e2602f1.
+
+Original prompt:
+> show a brush cleanup beside vram, ram and gpu that clears memory, kills free process etc when clciked making sure atleast the llm thingy is freed up.
+
+Pre-flight: use ownership-checked model Stop, preserve installed hover/drag and
+transparency, test native controls, record resource evidence honestly. Read
+project/shared instructions and applied the UI design skill plus project
+context-maintenance. No unrelated-process cleanup was inferred.
+
+Canonical visible response:
+
+**A. Installed:** Brush buttons now appear beside **VRAM, RAM, and GPU**. Any brush stops/unloads the configured LLM and refreshes the readings. Other applications stay open.
+
+**B. Tested:** 22 backend tests, 12 tray-state checks, and 6 native cleanup checks passed. Settings hide/show and rendered icons were verified. Published **v0.1.6**, commit `e2602f1`. [Report](https://github.com/paras-lehana/llm-tray/blob/main/docs/tasks/2026-10-18-cleanup/2026-10-18-cleanup-v0.1.6.md).
+
+**C. Your requests**
+
+| # | Task | Original pointer | Status | Result |
+|---|---|---|---|---|
+| 1 | Cleanup brushes | “beside vram, ram and gpu” | DONE | Three buttons; configurable in Settings |
+| 2 | Release LLM resources | “atleast the llm thingy is freed up” | IMPLEMENTED | Uses the existing scoped stop/unload action |
+
+**D. Extra:** Repeated clicks cannot restart the model. Controls disable during cleanup and show failures. Also fixed an Ollama status-parsing bug.
+
+**E. Remaining validation**
+
+| Check | Reason pending |
+|---|---|
+| Physical click/drag check | Windows screen is locked |
+| Actual RAM/VRAM reclaimed | Qwen is serving your conversation; I left it running |
+
+**F. Usage:** Hover over the tray icon, then click a brush. **This stops the current LLM reply.** Press **Ctrl + Alt + L** to start Qwen again. Settings can hide the brushes.
+
+**G. Copyable summary**
+
+```text
+LLM Tray — resource cleanup controls installed, version 0.1.6
+
+What's done
+- Brush buttons now sit beside the three resource readings. Each stops or unloads the configured local model and refreshes the displayed usage.
+- Cleanup leaves other applications open. It does not guess which background programs are disposable or reset readings to artificial zeros.
+- Buttons disable while cleanup runs, report errors, and cannot accidentally restart the model when clicked repeatedly.
+- The buttons can be hidden through Settings. Automated behavior checks, native control checks, saved preferences and rendered icons were verified.
+
+Suggested next steps
+- Use a brush when the model's resources are needed elsewhere, then use the existing model shortcut when ready to resume.
+- Remember that cleanup ends the model's current reply.
+- Complete the physical desktop check after unlocking the computer and measure the real memory reduction when no conversation is active. The current conversation was left running.
 ```
